@@ -424,24 +424,21 @@ body .BanniereSuperieur .menu-toggle
 .section_Correction {
     margin-top: 20px;   
 }
-    .contenuCorpsPages section .p-texte_nomMatiere,
-    .contenuPage .section-EEC_uti_zoneSuperviseur .p-texte_nomMatiere
+    .contenuCorpsPages section .p-texte_nomMatiere
     {
        margin-bottom: 0; 
        font-size: 16px;
        font-style: italic;
     }
         .contenuCorpsPages section .p-texte_exercice,
-        .contenuCorpsPages section .p-texte_correction,
-        .contenuPage .section-EEC_uti_zoneSuperviseur .p-texte_exercice
+        .contenuCorpsPages section .p-texte_correction
         {
             font-size: 25px;
             font-weight: bold;
             color: rgb(243, 99, 99);
         }
             .contenuCorpsPages section .p-texte_exercice .p-texte_titre,
-            .contenuCorpsPages section .p-texte_correction .p-texte_titre,
-            .contenuPage .section-EEC_uti_zoneSuperviseur .p-texte_titre
+            .contenuCorpsPages section .p-texte_correction .p-texte_titre
             {
                 color: #333;
                 font-size: 25px;
@@ -459,60 +456,19 @@ body .BanniereSuperieur .menu-toggle
                         font-size: 16px;
                         margin-bottom: 8px;
                     }
-                        .contenuCorpsPages section .p-texte_dateHeurePublication,
-                        .contenuPage .section-EEC_uti_zoneSuperviseur .p-texte_dateHeurePublication
+                        .contenuCorpsPages section .p-texte_dateHeurePublication
                         {
                             font-size: 10px;
                             margin-top: 5px;
                             margin-bottom: 0;
                         }
 
-/* DANS LA PAGE zoneSuperviseur */
 /* Styles pour la mise en page */
 .contenuPage
 {
     margin-top: 50px;
     padding: 20px;
 }
-
-/* Styles pour chaque section */
-.section-EEC_uti_zoneSuperviseur
-{
-    padding:2px 4px ;
-    margin: 20px 10px;
-    width: 350px;
-    border: 1px solid  rgba(203, 203, 203, 0.852);
-    border-radius: 10px;
-    background-color: rgb(226, 221, 221);
-    color: #333;
-    box-shadow: 2px 0px 4px rgb(233, 232, 232);
-    font-size: 20px;
-    text-align: justify;
-}
-    .contenuPage .section-EEC_uti_zoneSuperviseur .p-texte_exercice
-    {
-        font-size: 20px;
-        font-weight: bold;
-        color: rgb(243, 99, 99);
-    }
-        .contenuPage .section-EEC_uti_zoneSuperviseur .p-texte_titre
-        {
-            color: #333;
-            font-size: 15px;
-        }
-            .contenuPage .section-EEC_uti_zoneSuperviseur button
-            {
-                border: 0;
-                padding: 1px;
-                background-color: #ffffff00;
-                color: rgb(11, 43, 202);
-            }
-                .contenuPage .section-EEC_uti_zoneSuperviseur button:hover
-                {
-                    color: rgb(0, 0, 0);
-                    background-color: rgba(231, 224, 42, 0.828);
-                    /* background-color: #f13f3feb; */
-                }
 
 .contenuPage .ligneHorizontale {
     display: flex;
@@ -828,9 +784,10 @@ body .main-corpsPageSujetsCcSnSrTdTp .section-sujets td .annee {
 -------------------------------------  */
 .main-corpsPageErreur404 {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    background-color: #ffffff;
     text-align: center;
     padding: 50px;
+    margin-top: 35px;
 }
 .main-corpsPageErreur404 h1 {
     font-size: 36px;

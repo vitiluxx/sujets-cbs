@@ -22,7 +22,7 @@ if (session_status() == PHP_SESSION_NONE) {
                 var selectedOption = this.options[this.selectedIndex];
                 var value = selectedOption.value;
                 if (value !== "selectionnez") {
-                    window.location.href = value + ".php";
+                    window.location.href = value;
                 }
             });
         </script>
@@ -49,7 +49,6 @@ if (session_status() == PHP_SESSION_NONE) {
     <div class="banderole-menu">
         <!-- Contenu du menu déroulant -->
         <ul>
-            <li><a id="zone_superviseur" href="<?php echo HOST; ?>zoneSuperviseur"><p>Zone Superviseur</p></a></li>
             <li id="form_admin"><a href="<?php echo HOST; ?>form_admin"><p>Formulaire admin</p></a></li>
             <li id="form_insertion"><a href="<?php echo HOST; ?>form_insertionPDF"><p>Formulaire d'insertion PDF</p></a></li>
             <li><a href="#"><p>Profil</p></a></li>

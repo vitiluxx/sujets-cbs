@@ -4,7 +4,7 @@
 
         <div class="text-center mt-4">
             <p>&copy; 2024 SUJETS-CBS || Tous droits réservés</p>
-            <p>App développée par la CTIFI (Groupe de 6 codeurs) — gdc6.td@gmail.com</p>
+            <p>App développée par la CITFI — gdc6.td@gmail.com</p>
         </div>
 
         <!-- <div class="col-md-2">

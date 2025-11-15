@@ -10,8 +10,6 @@ class Routeur
 {
     private $requette;
     private $route = [
-                      "accueil.php" =>                                      ["controller" => "Controller", "method" => "affichePageAccueil" ], 
-
                       "form_inscriptionUtilisateur.php" =>                  ["controller" => "Controller", "method" => "affichePageForm_inscriptionUtilisateur"], 
                       "form_connexionUtilisateur.php" =>                    ["controller" => "Controller", "method" => "affichePageForm_connexionUtilisateur"],
                       "deconnexionUtilisateur.php" =>                       ["controller" => "Controller", "method" => "affichePageDeconnexionUtilisateur"],
@@ -22,11 +20,10 @@ class Routeur
                       "form_connexionCbs.php" =>                            ["controller" => "Controller", "method" => "affichePageForm_connexionEtudiantCbs"], 
                       "deconnexionEtudiantCbs.php" =>                       ["controller" => "Controller", "method" => "affichePageDeconnexionEtudiantCbs"], 
                       
-                      "dashboard.php" =>                                    ["controller" => "ControllerAdmin", "method" => "affichePageDashboard"],                      
                       "demandesinscription.php" =>                          ["controller" => "ControllerAdmin", "method" => "affichePageDemandesInscription"], 
                       "listeetudiantsinscrits.php" =>                          ["controller" => "ControllerAdmin", "method" => "affichePageListeEtudiantsInscrits"], 
-                      "confirmerinscription.php" =>                         ["controller" => "ControllerAdmin", "method" => "affichePageConfirmerInscription"], 
-                      "supprimerdemandeinscription.php" =>                         ["controller" => "ControllerAdmin", "method" => "affichePageSupprimerDemandeInscription"], 
+                    //   "confirmerinscription.php" =>                         ["controller" => "ControllerAdmin", "method" => "affichePageConfirmerInscription"], 
+                    //   "supprimerdemandeinscription.php" =>                         ["controller" => "ControllerAdmin", "method" => "affichePageSupprimerDemandeInscription"], 
                       "form_publierEEC.php" =>                              ["controller" => "ControllerAdmin", "method" => "affichePageForm_publierEEC"],                      
                       "form_insertionPDF.php" =>                            ["controller" => "ControllerAdmin", "method" => "affichePageForm_insertionPDF"], 
                       "zoneAdmin.php" =>                                    ["controller" => "ControllerAdmin", "method" => "affichePageZoneAdmin"], 
@@ -34,7 +31,6 @@ class Routeur
                                       
                       "form_admin.php" =>                                   ["controller" => "Controller", "method" => "affichePageform_admin"],      
                       "form_modifierExerciceUtilisateur.php" =>             ["controller" => "Controller", "method" => "affichePageform_modifierExerciceUtilisateur"], 
-                      "zoneSuperviseur.php" =>                              ["controller" => "ControllerAdmin", "method" => "affichePageZoneSuperviseur"], 
                       "liste_filieres.php" =>                               ["controller" => "Controller", "method" => "affichePageListe_filieres"],
                       "cc.php" =>                                           ["controller" => "Controller", "method" => "affichePageCc"],
                       "sn.php" =>                                           ["controller" => "Controller", "method" => "affichePageSn"],
@@ -82,7 +78,6 @@ MEME CHOSE JUSTE C'EST UNE DUPLICATION POUR QUE MEME SI L'ON DEMANDE UNE PAGE SA
                       "form_insertionPDF" =>                            ["controller" => "ControllerAdmin", "method" => "affichePageForm_insertionPDF"], 
                       "form_admin" =>                                   ["controller" => "Controller", "method" => "affichePageform_admin"], 
                       "form_modifierExerciceUtilisateur" =>             ["controller" => "Controller", "method" => "affichePageform_modifierExerciceUtilisateur"], 
-                      "zoneSuperviseur" =>                              ["controller" => "Controller", "method" => "affichePageZoneSuperviseur"], 
                       "zoneAdmin" =>                                    ["controller" => "ControllerAdmin", "method" => "affichePageZoneAdmin"], 
                       "liste_filieres" =>                               ["controller" => "ControllerAdmin", "method" => "affichePageListe_filieres"], 
                       "cc" =>                                           ["controller" => "Controller", "method" => "affichePageCc"],
@@ -99,8 +94,6 @@ MEME CHOSE JUSTE C'EST UNE DUPLICATION POUR QUE MEME SI L'ON DEMANDE UNE PAGE SA
                       "reinitialisation_mdp" =>                         ["controller" => "Controller", "method" => "affichePageReinitialisation_mdp"],
                       "confirmation" =>                                 ["controller" => "Controller", "method" => "affichePageConfirmation"],
 
-
-                      "achat-liv-valider-671116" =>            ["controller" => "Controller", "method" => "dvrtusbetakefesfsrfrgtgesfdsfdgrw"],
 
                     ];
 
@@ -142,24 +135,6 @@ MEME CHOSE JUSTE C'EST UNE DUPLICATION POUR QUE MEME SI L'ON DEMANDE UNE PAGE SA
             <!--        <script>alert("Desoler page proteger !! Vous n'etes pas connecter en tant que Super_Root")</script> -->
                      <?php
             //         echo "Erreur ... Revenez plus tard lorsque vous serez connecter en tant que Super_Root";
-            //     }
-            // }
-            // elseif($requette === "zoneSuperviseur" OR $requette === "zoneSuperviseur.php" OR $requette === "form_modifierExerciceUtilisateur" OR $requette === "form_modifierExerciceUtilisateur.php")
-            // {
-            //     if(isset($_SESSION['superviseur']) && $_SESSION['superviseur'] === true)
-            //     {
-            //         $controller = $this->route[$requette]["controller"]; //on recupere la requette + le controller
-            //         $method = $this->route[$requette]["method"]; // de meme on recupere la requette + la method adequoite
-                    
-            //         $controllerDemander = new $controller();
-            //         $controllerDemander->$method();
-            //     }
-            //     else
-            //     {
-                    ?>
-            <!-- //         <script>alert("Desoler page proteger !! Vous n'etes pas connecter en tant que Superviseur")</script> -->
-                    <?php
-            //         echo "Erreur ... Revenez plus tard lorsque vous serez connecter en tant que Superviseur";
             //     }
             // }
             // else

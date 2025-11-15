@@ -26,6 +26,12 @@ function debug($variable, $exit = true) {
 // Fonctions de sécurité
 function securite() {
     startSessionIfNotStarted();
+    
+    // Empêcher la mise en cache des pages protégées
+    header("Cache-Control: no-cache, no-store, must-revalidate");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+    
     if (!isset($_SESSION['auth'])) {
         header('location: '.HOST.'form_connexionUtilisateur.php');
         exit();
@@ -34,6 +40,12 @@ function securite() {
 
 function securiteCbs() {
     startSessionIfNotStarted();
+    
+    // Empêcher la mise en cache des pages protégées
+    header("Cache-Control: no-cache, no-store, must-revalidate");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+    
     if (!isset($_SESSION['usercbs'])) {
         header('location: '.HOST.'form_connexionUtilisateur.php');
         exit();
@@ -42,6 +54,12 @@ function securiteCbs() {
 
 function securiteAdmin() {
     startSessionIfNotStarted();
+    
+    // Empêcher la mise en cache des pages protégées
+    header("Cache-Control: no-cache, no-store, must-revalidate");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+    
     if (!isset($_SESSION['admin'])) {
         header('location: '.HOST.'form_connexionUtilisateur.php');
         exit();
@@ -50,6 +68,12 @@ function securiteAdmin() {
 
 function securiteAdminRole($role) {
     startSessionIfNotStarted();
+    
+    // Empêcher la mise en cache des pages protégées
+    header("Cache-Control: no-cache, no-store, must-revalidate");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+    
     if (!isset($_SESSION['admin']) || $_SESSION['admin']['role_adm'] !== $role) {
         header('location: '.HOST.'form_connexionUtilisateur.php');
         exit();

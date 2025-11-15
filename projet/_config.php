@@ -25,9 +25,6 @@ define('ASSETS_UPLOADS_CBS_IMAGES_ROOT', ASSETS_ROOT.'uploads/cbs/images/');
 
 define('DOC_ADMINISTRATEUR', VIEW_ROOT .'docAdministrateur/');
 
-define('DOC_SUPERVISEUR', VIEW_ROOT .'docSuperviseur/');
-define('DOC_SUPERVISEUR_HOST', VIEW_HOST .'docSuperviseur/');
-
 define('CEFODBUSINESSSCHOOL_HOST', VIEW_HOST.'cefodbusinessschool/');
 define('CEFODBUSINESSSCHOOL_ROOT', VIEW_ROOT.'cefodbusinessschool/');
 

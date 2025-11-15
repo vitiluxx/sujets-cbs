@@ -112,7 +112,7 @@ class Controller
                 
                     $mail = $_POST['email_etu'];
                     $subject = "Confirmation du compte";
-                    $message = "Afin de confirmer votre compte,merci de cliquer sur ce lien\n\n".
+                    $message = "Afin de confirmer votre compte, merci de cliquer sur ce lien \n\n".
                     HOST."confirmation.php?id=$userId&token=$token";
 
 
@@ -198,13 +198,10 @@ public function affichePageForm_connexionUtilisateur()
                 $error = "L'email et le mot de passe sont requis.";
             } else {
                 $admin = $this->getAdminByEmail($connexionBd, $email);
-                $superviseur = $this->getSuperviseurByEmail($connexionBd, $email);
                 $utilisateur = $this->getUtilisateurByEmail($connexionBd, $email);
 
                 if ($admin && $email === $admin->email_adm) {
                     $this->connecterAdmin($connexionBd, $email, $mdp); // redirige si OK
-                } elseif ($superviseur && $email === $superviseur->email_sup) {
-                    $this->connecterSuperviseur($connexionBd, $email, $mdp); // redirige si OK
                 } elseif ($utilisateur && $email === $utilisateur->email_uti) {
                     $this->connecterUtilisateur($connexionBd, $email, $mdp); // redirige si OK
                 } else {
@@ -226,15 +223,6 @@ public function affichePageForm_connexionUtilisateur()
 // Méthode pour récupérer un admin par email
 private function getAdminByEmail($connexionBd, $email) {
     $query = "SELECT * FROM admin WHERE email_adm = :email";
-    $req = $connexionBd->prepare($query);
-    $req->bindParam(":email", $email, PDO::PARAM_STR);
-    $req->execute();
-    return $req->fetch(PDO::FETCH_OBJ) ?: null; // Retourne null si aucun résultat
-}
-
-// Méthode pour récupérer un superviseur par email
-private function getSuperviseurByEmail($connexionBd, $email) {
-    $query = "SELECT * FROM superviseur WHERE email_sup = :email";
     $req = $connexionBd->prepare($query);
     $req->bindParam(":email", $email, PDO::PARAM_STR);
     $req->execute();
@@ -263,21 +251,6 @@ private function connecterAdmin($connexionBd, $email, $mdp) {
         exit();
     } else {
         throw new Exception("Identifiant ou mot de passe Admin incorrect.");
-    }
-}
-
-// Méthode pour connecter un superviseur
-private function connecterSuperviseur($connexionBd, $email, $mdp) {
-    $superviseur = $this->getSuperviseurByEmail($connexionBd, $email);
-
-    if ($superviseur && password_verify($mdp, $superviseur->mdp_sup)) {
-        $_SESSION['auth'] = $superviseur;
-        $_SESSION['role'] = 'superviseur';
-        $_SESSION['flash']['success'] = "Connexion Superviseur effectuée avec succès.";
-        header("Location: " . HOST . "zoneSuperviseur");
-        exit();
-    } else {
-        throw new Exception("Identifiant ou mot de passe incorrect.");
     }
 }
 
@@ -389,18 +362,35 @@ private function connecterUtilisateur($connexionBd, $email, $mdp) {
 public function affichePageDeconnexionUtilisateur()
 {
     require("connexionBd.php");
+    require(MODEL_ROOT."fonctions.php");
 
-    session_start();
+    startSessionIfNotStarted();
     
-    // Supprimer seulement les données utilisateur/superviseur
-    unset($_SESSION['auth']);
-    unset($_SESSION['role']);
-    unset($_SESSION['flash']);
-    unset($_SESSION['message_inscription']);
+    // Supprimer toutes les données de session
+    $_SESSION = array();
     
-    // NE PAS détruire la session complète pour préserver les autres connexions
-    // session_unset();
-    // session_destroy();
+    // Supprimer le cookie de session s'il existe
+    if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+        );
+    }
+    
+    // Supprimer le cookie de connexion automatique
+    if (isset($_COOKIE['connexion_auto'])) {
+        setcookie('connexion_auto', '', time() - 3600, '/');
+    }
+    
+    // Détruire complètement la session
+    session_unset();
+    session_destroy();
+    
+    // Empêcher la mise en cache de la page de déconnexion
+    header("Cache-Control: no-cache, no-store, must-revalidate");
+    header("Pragma: no-cache");
+    header("Expires: 0");
     
     header("Location: ".HOST."form_connexionUtilisateur");
     exit();
@@ -571,7 +561,7 @@ public function affichePageDeconnexionUtilisateur()
             require("connexionBd.php");
             require(MODEL_ROOT."ExercicesEtCorrections.class.php");
             require(MODEL_ROOT."fonctions.php");
-            securiteAdminRole('superviseur');
+            securiteAdmin();
 
             //Recuperation de l'exercice a modifier
             if (isset($_GET["id"])) 
@@ -617,7 +607,7 @@ public function affichePageDeconnexionUtilisateur()
                     $eec->insererCorrections($titre_cor, $libelle_cor, $fichier, $date_pub, $heure_pub, $lastInsertId_exe);
             
                     $eec->supprimerExcerciceCorrection($id);
-                    header("Location: " . HOST . "zoneSuperviseur.php");  
+                    header("Location: " . HOST . "zoneAdmin.php");  
                             
                 } 
                 
@@ -626,14 +616,14 @@ public function affichePageDeconnexionUtilisateur()
                     $id = (int) $eec->filtrerDonnees($_POST["id"]);
             
                     $eec->supprimerExcerciceCorrection($id);
-                    header("Location: " . HOST . "zoneSuperviseur.php");          
+                    header("Location: " . HOST . "zoneAdmin.php");          
                 }
 
                 
                     
             
 
-            include(DOC_SUPERVISEUR."form_modifierExerciceUtilisateur.php");
+            include(VIEW_ROOT."form_modifierExerciceUtilisateur.php");
             ExercicesEtCorrections::cacheLesMenusReserverAdmin();    
         } 
 
@@ -747,16 +737,30 @@ public function affichePageDeconnexionUtilisateur()
                 // die();
                 
                 
-                if(isset($req))
+                if(isset($req) && !empty($req->cc))
                 {   
                     $emplacementPDF = ASSETS_ROOT."uploads/docpdf/";
                     $nom_fichierPDF = $req->cc;
-                    header("Content-Description: File transfer");
-                    header("Content-type:application/octet-stream");
-                    header("Content-Disposition:attachment;filename=".$nom_fichierPDF);
-                    header("Content-length:".filesize($emplacementPDF.$nom_fichierPDF));
-                    ob_clean();
-                    readfile($emplacementPDF.$nom_fichierPDF);
+                    
+                    // S'assurer que le fichier a l'extension .pdf
+                    if (strtolower(substr($nom_fichierPDF, -4)) !== '.pdf') {
+                        $nom_fichierPDF .= '.pdf';
+                    }
+                    
+                    $cheminComplet = $emplacementPDF . $req->cc;
+                    
+                    if (file_exists($cheminComplet)) {
+                        header("Content-Description: File transfer");
+                        header("Content-Type: application/pdf");
+                        header("Content-Disposition: attachment; filename=\"" . basename($nom_fichierPDF) . "\"");
+                        header("Content-Length: " . filesize($cheminComplet));
+                        header("Cache-Control: no-cache, must-revalidate");
+                        header("Pragma: no-cache");
+                        ob_clean();
+                        flush();
+                        readfile($cheminComplet);
+                        exit();
+                    }
                 }
                 
                 else
@@ -792,16 +796,30 @@ public function affichePageDeconnexionUtilisateur()
                 // die();
                 
                 
-                if(isset($req))
+                if(isset($req) && !empty($req->sn))
                 {   
                     $emplacementPDF = ASSETS_ROOT."uploads/docpdf/";
                     $nom_fichierPDF = $req->sn;
-                    header("Content-Description: File transfer");
-                    header("Content-type:application/octet-stream");
-                    header("Content-Disposition:attachment;filename=".$nom_fichierPDF);
-                    header("Content-length:".filesize($emplacementPDF.$nom_fichierPDF));
-                    ob_clean();
-                    readfile($emplacementPDF.$nom_fichierPDF);
+                    
+                    // S'assurer que le fichier a l'extension .pdf
+                    if (strtolower(substr($nom_fichierPDF, -4)) !== '.pdf') {
+                        $nom_fichierPDF .= '.pdf';
+                    }
+                    
+                    $cheminComplet = $emplacementPDF . $req->sn;
+                    
+                    if (file_exists($cheminComplet)) {
+                        header("Content-Description: File transfer");
+                        header("Content-Type: application/pdf");
+                        header("Content-Disposition: attachment; filename=\"" . basename($nom_fichierPDF) . "\"");
+                        header("Content-Length: " . filesize($cheminComplet));
+                        header("Cache-Control: no-cache, must-revalidate");
+                        header("Pragma: no-cache");
+                        ob_clean();
+                        flush();
+                        readfile($cheminComplet);
+                        exit();
+                    }
                 }
                 
                 else
@@ -839,16 +857,30 @@ public function affichePageDeconnexionUtilisateur()
             // die();
             
             
-            if(isset($req))
+            if(isset($req) && !empty($req->sr))
             {   
                 $emplacementPDF = ASSETS_ROOT."uploads/docpdf/";
                 $nom_fichierPDF = $req->sr;
-                header("Content-Description: File transfer");
-                header("Content-type:application/octet-stream");
-                header("Content-Disposition:attachment;filename=".$nom_fichierPDF);
-                header("Content-length:".filesize($emplacementPDF.$nom_fichierPDF));
-                ob_clean();
-                readfile($emplacementPDF.$nom_fichierPDF);
+                
+                // S'assurer que le fichier a l'extension .pdf
+                if (strtolower(substr($nom_fichierPDF, -4)) !== '.pdf') {
+                    $nom_fichierPDF .= '.pdf';
+                }
+                
+                $cheminComplet = $emplacementPDF . $req->sr;
+                
+                if (file_exists($cheminComplet)) {
+                    header("Content-Description: File transfer");
+                    header("Content-Type: application/pdf");
+                    header("Content-Disposition: attachment; filename=\"" . basename($nom_fichierPDF) . "\"");
+                    header("Content-Length: " . filesize($cheminComplet));
+                    header("Cache-Control: no-cache, must-revalidate");
+                    header("Pragma: no-cache");
+                    ob_clean();
+                    flush();
+                    readfile($cheminComplet);
+                    exit();
+                }
             }
             
             else
@@ -887,16 +919,30 @@ public function affichePageDeconnexionUtilisateur()
             // die();
             
             
-            if(isset($req))
+            if(isset($req) && !empty($req->bts))
             {   
                 $emplacementPDF = ASSETS_ROOT."uploads/docpdf/";
                 $nom_fichierPDF = $req->bts;
-                header("Content-Description: File transfer");
-                header("Content-type:application/octet-stream");
-                header("Content-Disposition:attachment;filename=".$nom_fichierPDF);
-                header("Content-length:".filesize($emplacementPDF.$nom_fichierPDF));
-                ob_clean();
-                readfile($emplacementPDF.$nom_fichierPDF);
+                
+                // S'assurer que le fichier a l'extension .pdf
+                if (strtolower(substr($nom_fichierPDF, -4)) !== '.pdf') {
+                    $nom_fichierPDF .= '.pdf';
+                }
+                
+                $cheminComplet = $emplacementPDF . $req->bts;
+                
+                if (file_exists($cheminComplet)) {
+                    header("Content-Description: File transfer");
+                    header("Content-Type: application/pdf");
+                    header("Content-Disposition: attachment; filename=\"" . basename($nom_fichierPDF) . "\"");
+                    header("Content-Length: " . filesize($cheminComplet));
+                    header("Cache-Control: no-cache, must-revalidate");
+                    header("Pragma: no-cache");
+                    ob_clean();
+                    flush();
+                    readfile($cheminComplet);
+                    exit();
+                }
             }
             
             else
@@ -933,16 +979,30 @@ public function affichePageDeconnexionUtilisateur()
                 // die();
                 
                 
-                if(isset($req))
+                if(isset($req) && !empty($req->td))
                 {   
                     $emplacementPDF = ASSETS_ROOT."uploads/docpdf/";
                     $nom_fichierPDF = $req->td;
-                    header("Content-Description: File transfer");
-                    header("Content-type:application/octet-stream");
-                    header("Content-Disposition:attachment;filename=".$nom_fichierPDF);
-                    header("Content-length:".filesize($emplacementPDF.$nom_fichierPDF));
-                    ob_clean();
-                    readfile($emplacementPDF.$nom_fichierPDF);
+                    
+                    // S'assurer que le fichier a l'extension .pdf
+                    if (strtolower(substr($nom_fichierPDF, -4)) !== '.pdf') {
+                        $nom_fichierPDF .= '.pdf';
+                    }
+                    
+                    $cheminComplet = $emplacementPDF . $req->td;
+                    
+                    if (file_exists($cheminComplet)) {
+                        header("Content-Description: File transfer");
+                        header("Content-Type: application/pdf");
+                        header("Content-Disposition: attachment; filename=\"" . basename($nom_fichierPDF) . "\"");
+                        header("Content-Length: " . filesize($cheminComplet));
+                        header("Cache-Control: no-cache, must-revalidate");
+                        header("Pragma: no-cache");
+                        ob_clean();
+                        flush();
+                        readfile($cheminComplet);
+                        exit();
+                    }
                 }
                 
                 else
@@ -978,17 +1038,30 @@ public function affichePageDeconnexionUtilisateur()
                 $req = $eec->ligneFichierPDF($examen, $filiere, $id_pdf);
                 
                 
-                if(isset($req))
+                if(isset($req) && !empty($req->tp))
                 {   
                     $emplacementPDF = ASSETS_ROOT."uploads/docpdf/";
                     $nom_fichierPDF = $req->tp;
-                    // echo $nom_fichierPDF; exit;
-                    header("Content-Description: File transfer");
-                    header("Content-type:application/octet-stream");
-                    header("Content-Disposition:attachment;filename=".$nom_fichierPDF);
-                    header("Content-length:".filesize($emplacementPDF.$nom_fichierPDF));
-                    ob_clean();
-                    readfile($emplacementPDF.$nom_fichierPDF);
+                    
+                    // S'assurer que le fichier a l'extension .pdf
+                    if (strtolower(substr($nom_fichierPDF, -4)) !== '.pdf') {
+                        $nom_fichierPDF .= '.pdf';
+                    }
+                    
+                    $cheminComplet = $emplacementPDF . $req->tp;
+                    
+                    if (file_exists($cheminComplet)) {
+                        header("Content-Description: File transfer");
+                        header("Content-Type: application/pdf");
+                        header("Content-Disposition: attachment; filename=\"" . basename($nom_fichierPDF) . "\"");
+                        header("Content-Length: " . filesize($cheminComplet));
+                        header("Cache-Control: no-cache, must-revalidate");
+                        header("Pragma: no-cache");
+                        ob_clean();
+                        flush();
+                        readfile($cheminComplet);
+                        exit();
+                    }
                 }
                 
                 else
@@ -1038,6 +1111,12 @@ public function affichePageCbs()
 { 
     require("connexionBd.php");
     require(MODEL_ROOT."ExercicesEtCorrections.class.php");
+    
+    // Empêcher la mise en cache
+    header("Cache-Control: no-cache, no-store, must-revalidate");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+    
     // Vérifier si l'etudiant est connecté
     if (!isset($_SESSION['etudiant'])) {
         // Rediriger vers la page de connexion

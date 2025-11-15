@@ -133,8 +133,21 @@ class ExercicesEtCorrections
             }
             public function afficherSujetExamen($examen, $filiere)
             {
+                // Liste des colonnes d'examen valides pour éviter les injections SQL
+                $examensValides = ['cc', 'sn', 'sr', 'bts', 'td', 'tp'];
+                if (!in_array($examen, $examensValides)) {
+                    return [];
+                }
+                
+                // Liste des filières valides
+                $filieresValides = ['gi', 'mcd', 'cf', 'lt', 'edd', 'grh', 'dcj', 'scienceid'];
+                if (!in_array($filiere, $filieresValides)) {
+                    return [];
+                }
+                
                 // Sécurisation des noms de colonnes et de table avec des backticks
-                $sql = "SELECT `id`, `matiere`, `annee`, `$examen` FROM `$filiere` ORDER BY `annee` DESC";
+                // Filtrer pour ne montrer que les lignes où le champ d'examen n'est pas NULL
+                $sql = "SELECT `id`, `matiere`, `annee`, `$examen` FROM `$filiere` WHERE `$examen` IS NOT NULL AND `$examen` != '' ORDER BY `annee` DESC";
             
                 // Utilisation d'une requête préparée pour éviter les injections SQL
                 $req_affiche = $this->connexionBd->query($sql);
@@ -146,7 +159,20 @@ class ExercicesEtCorrections
             }
                 public function ligneFichierPDF($examen, $filiere, $id_pdf)
                 {
-                    $req = $this->connexionBd->prepare("SELECT $examen FROM $filiere WHERE id = :id_pdf ");
+                    // Liste des colonnes d'examen valides pour éviter les injections SQL
+                    $examensValides = ['cc', 'sn', 'sr', 'bts', 'td', 'tp'];
+                    if (!in_array($examen, $examensValides)) {
+                        return null;
+                    }
+                    
+                    // Liste des filières valides
+                    $filieresValides = ['gi', 'mcd', 'cf', 'lt', 'edd', 'grh', 'dcj', 'scienceid'];
+                    if (!in_array($filiere, $filieresValides)) {
+                        return null;
+                    }
+                    
+                    // Utilisation de backticks pour sécuriser les noms de colonnes et table
+                    $req = $this->connexionBd->prepare("SELECT `$examen` FROM `$filiere` WHERE `id` = :id_pdf ");
                     $req->bindParam(":id_pdf", $id_pdf, PDO::PARAM_INT);
                     $req->execute();
                     $donnee = $req->fetch(PDO::FETCH_OBJ);
@@ -231,16 +257,14 @@ class ExercicesEtCorrections
     public static function cacheLesMenusReserverAdmin()
     {
         require("connexionBd.php");
-        $superviseur = "superviseur";
-        $tableSuperviseur = ExercicesEtCorrections::req_selectionContenuTable($superviseur);
         $utilisateur = "utilisateurs";
         $tableUtilisateur = ExercicesEtCorrections::req_selectionContenuTable($utilisateur);
         $admin = "admin";
         $tableAdministrateur = ExercicesEtCorrections::req_selectionContenuTable($admin);
     
-        if($tableSuperviseur && @$_SESSION['auth'] == $tableSuperviseur->email_sup)
+        if($tableUtilisateur && @$_SESSION['auth'] == $tableUtilisateur->email_uti)
         { ?>
-            <!--******* SCRIPT POUR CACHER L'ACCES AUX FORMULAIRE_ADMIN AINSI QUE LE FORMULAIFRE_INSERTIONPDF AU SUPERVISEUR *******-->
+            <!--******* SCRIPT POUR CACHER L'ACCES AUX FORMULAIRE_ADMIN AINSI QUE LE FORMULAIFRE_INSERTIONPDF AUX UTILISATEURS *******-->
             <script>
                 var menuAdmin1 = document.getElementById('form_admin');
                 var menuAdmin2 = document.getElementById('form_insertion');
@@ -248,52 +272,32 @@ class ExercicesEtCorrections
                 {
                     menuAdmin1.style.display='none';
                     menuAdmin2.style.display='none';
-                }
-            </script>
-<?php  }
-
-
-        elseif($tableUtilisateur && @$_SESSION['auth'] == $tableUtilisateur->email_uti)
-        { ?>
-            <!--******* SCRIPT POUR CACHER L'ACCES AUX FORMULAIRE_ADMIN AINSI QUE LE FORMULAIFRE_INSERTIONPDF AU SUPERVISEUR *******-->
-            <script>
-                var menuAdmin1 = document.getElementById('form_admin');
-                var menuAdmin2 = document.getElementById('form_insertion');
-                var menuSupervisuer1 = document.getElementById('zone_superviseur');
-                if(menuAdmin1)
-                {
-                    menuAdmin1.style.display='none';
-                    menuAdmin2.style.display='none';
-                    menuSupervisuer1.style.display='none';
                 }
             </script>
 <?php  } 
 
         elseif($tableAdministrateur && @$_SESSION['admin'] == $tableAdministrateur->email_adm)
         { ?>
-            <!--******* SCRIPT POUR CACHER L'ACCES AUX FORMULAIRE_ADMIN AINSI QUE LE FORMULAIFRE_INSERTIONPDF AU SUPERVISEUR *******-->
+            <!--******* SCRIPT POUR AFFICHER LES MENUS ADMIN AUX ADMINISTRATEURS *******-->
             <script>
                 var menuAdmin1 = document.getElementById('form_admin');
                 var menuAdmin2 = document.getElementById('form_insertion');
-                var menuSupervisuer1 = document.getElementById('zone_superviseur');
                 if(menuAdmin1)
                 {
-
+                    // Les menus admin sont visibles pour les administrateurs
                 }
             </script>
 <?php  }
         else
         { ?>
-            <!--******* SCRIPT POUR CACHER L'ACCES AUX FORMULAIRE_ADMIN AINSI QUE LE FORMULAIFRE_INSERTIONPDF AU SUPERVISEUR *******-->
+            <!--******* SCRIPT POUR CACHER L'ACCES AUX FORMULAIRE_ADMIN AINSI QUE LE FORMULAIFRE_INSERTIONPDF AUX VISITEURS *******-->
             <script>
                 var menuAdmin1 = document.getElementById('form_admin');
                 var menuAdmin2 = document.getElementById('form_insertion');
-                var menuSupervisuer1 = document.getElementById('zone_superviseur');
                 if(menuAdmin1)
                 {
                     menuAdmin1.style.display='none';
                     menuAdmin2.style.display='none';
-                    menuSupervisuer1.style.display='none';
                 }
             </script>
 <?php  }

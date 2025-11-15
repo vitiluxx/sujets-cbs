@@ -55,14 +55,14 @@
                                         $id = $ligne->id; // L'ID du fichier à télécharger ?>
                                         <tr>
                                             <td>
-                                                <a href="fonctions/telechargerPdfCc.php?id=<?= $id ?>&filiere=<?= $filiere ?>">
+                                                <a href="<?php echo HOST; ?>telechargerPdfBts.php?id=<?= $id ?>&filiere=<?= $filiere ?>">
                                                     <img src="<?php echo ASSETS_HOST; ?>icones/pdf1.png" alt="Icône PDF" class="pdf-icon"> <!-- icon PDF .png -->
                                                 </a>
                                             </td>
                                             <td><?= $ligne->matiere ?></td> <!-- Nom de la matière -->
                                             <td><?= $ligne->annee ?></td> <!-- Année -->
                                             <td>
-                                                <a href="<?php HOST;?>telechargerPdfBts.php?id=<?= $id ?>&filiere=<?= $filiere ?>">
+                                                <a href="<?php echo HOST; ?>telechargerPdfBts.php?id=<?= $id ?>&filiere=<?= $filiere ?>">
                                                     <button id="telecharger">Télécharger</button>
                                                 </a> <!-- Bouton Télécharger -->
                                             </td>

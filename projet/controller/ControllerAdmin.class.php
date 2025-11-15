@@ -21,6 +21,12 @@ class ControllerAdmin
         require(MODEL_ROOT."ExercicesEtCorrections.class.php");
         $eec = new ExercicesEtCorrections($connexionBd);
         require(MODEL_ROOT."fonctions.php");
+        
+        // Empêcher la mise en cache
+        header("Cache-Control: no-cache, no-store, must-revalidate");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+        
         securiteAdmin();
 
         // Traitement de la confirmation d'inscription
@@ -239,23 +245,6 @@ class ControllerAdmin
         include(DOC_ADMINISTRATEUR."zoneAdmin.php");
         ExercicesEtCorrections::cacheLesMenusReserverAdmin();
     }
-
-/*============================================================================================================================ */
-
-public function affichePageZoneSuperviseur() 
-{                        
-    require("connexionBd.php");
-    require(MODEL_ROOT."ExercicesEtCorrections.class.php");
-    require(MODEL_ROOT."fonctions.php");
-    securiteAdmin();
-
-    $eec = new ExercicesEtCorrections($connexionBd);
-        
-    $table = $eec->afficherDonneesUtilisateurs();
-    $count = 0;
-    include(DOC_SUPERVISEUR."zoneSuperviseur.php");
-    ExercicesEtCorrections::cacheLesMenusReserverAdmin();
-}
 
 /*============================================================================================================================ */
 
