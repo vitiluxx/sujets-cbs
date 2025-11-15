@@ -73,13 +73,11 @@ MEME CHOSE JUSTE C'EST UNE DUPLICATION POUR QUE MEME SI L'ON DEMANDE UNE PAGE SA
                       "deconnexionEtudiantCbs" =>                       ["controller" => "Controller", "method" => "affichePageDeconnexionEtudiantCbs"], 
                       
 
-                      "dashboard" =>                                    ["controller" => "ControllerAdmin", "method" => "affichePageDashboard"],                      
+                      "dashboard" =>                                    ["controller" => "ControllerAdmin", "method" => "affichePageDemandesInscription"],                      
                       "demandesinscription" =>                          ["controller" => "ControllerAdmin", "method" => "affichePageDemandesInscription"], 
                       "listeetudiantsinscrits" =>                          ["controller" => "ControllerAdmin", "method" => "affichePageListeEtudiantsInscrits"], 
                       "confirmerinscription" =>                         ["controller" => "ControllerAdmin", "method" => "affichePageConfirmerInscription"], 
                       "supprimerdemandeinscription" =>                         ["controller" => "ControllerAdmin", "method" => "affichePageSupprimerDemandeInscription"], 
-                      "form_publierEEC" =>                              ["controller" => "ControllerAdmin", "method" => "affichePageForm_publierEEC"],                      
-
 
                       "form_insertionPDF" =>                            ["controller" => "ControllerAdmin", "method" => "affichePageForm_insertionPDF"], 
                       "form_admin" =>                                   ["controller" => "Controller", "method" => "affichePageform_admin"], 

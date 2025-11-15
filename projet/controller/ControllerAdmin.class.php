@@ -13,19 +13,6 @@
  */
 class ControllerAdmin
 {
-
-    /*============================================================================================================================ */  
-    public function affichePageDashboard()
-    {
-        require("connexionBd.php");
-        require(MODEL_ROOT."ExercicesEtCorrections.class.php");
-        $eec = new ExercicesEtCorrections($connexionBd);
-        require(MODEL_ROOT."fonctions.php");
-        securiteAdmin();
-      
-        include(DOC_ADMINISTRATEUR . "dashboard.php");
-    
-    }
     /*============================================================================================================================ */  
     public function affichePageDemandesInscription()
     {

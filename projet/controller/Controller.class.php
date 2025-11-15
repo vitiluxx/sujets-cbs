@@ -11,44 +11,6 @@
  */
 class Controller
 {
-
-        /*============================================================================================================================ */    
-
-
-        public function affichePageAccueil()
-        {
-            require("connexionBd.php");
-            require(MODEL_ROOT."ExercicesEtCorrections.class.php");
-            include(VIEW_ROOT."accueil.php");
-            ExercicesEtCorrections::cacheLesMenusReserverAdmin();
-        }
-
-
-
-        /*============================================================================================================================ */    
-
-        public function affichePageExercices()
-        {
-            require("connexionBd.php");
-            require(MODEL_ROOT."ExercicesEtCorrections.class.php");
-            $eec = new ExercicesEtCorrections($connexionBd);
-            $table = $eec->afficherTables();
-            include_once(VIEW_ROOT."exercices.php");
-            ExercicesEtCorrections::cacheLesMenusReserverAdmin();
-        }
-
-        /*============================================================================================================================ */    
-
-        public function affichePageCorrections()
-        {
-            require("connexionBd.php");
-            require(MODEL_ROOT."ExercicesEtCorrections.class.php");
-            $eec = new ExercicesEtCorrections($connexionBd);
-            $table = $eec->afficherTables();
-            include_once(VIEW_ROOT."corrections.php");
-            ExercicesEtCorrections::cacheLesMenusReserverAdmin();
-        }
-
         /*============================================================================================================================ */    
                              
         public function affichePageForm_inscriptionUtilisateur()

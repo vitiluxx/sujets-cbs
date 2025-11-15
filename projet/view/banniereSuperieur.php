@@ -8,9 +8,6 @@ if (session_status() == PHP_SESSION_NONE) {
     <img src="<?php echo ASSETS_HOST; ?>images/logo05.png" alt="logoEEC" id="logo_banniereSuperieur" />
     
     <ul class="ul-global" >
-        <li id="menuAccueil"><a href="<?php echo HOST; ?>accueil">Accueil</a></li>
-        <li id="menuExercices"><a href="<?php echo HOST; ?>exercices">Exercices</a></li>
-        <li id="menuCorrections"><a href="<?php echo HOST; ?>corrections">Corrections</a></li>
         <li id="menuSujets">
             <select id="menuDeroulant">
                 <option id="option_sujet" value="selectionnez">Sujets</option>
@@ -30,7 +27,6 @@ if (session_status() == PHP_SESSION_NONE) {
             });
         </script>
 
-        <li id="menuPublierEEC"><a href="<?php echo HOST; ?>form_publierEEC">PublierE&C</a></li>
     </ul>
 
     <!-- <?php if ( (isset($_SESSION['auth'])) OR (isset($_SESSION['admin'])) ) : ?>

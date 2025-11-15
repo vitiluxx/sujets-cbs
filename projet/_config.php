@@ -6,8 +6,8 @@ error_reporting(E_ALL);
 $host = $_SERVER['HTTP_HOST'];
 $root = $_SERVER['DOCUMENT_ROOT'];
 
-define ('HOST', 'http://'.$host.'/exercices_et_corrections_cbs/projet/');
-define ('ROOT', $root.'/exercices_et_corrections_cbs/projet/');
+define ('HOST', 'http://'.$host.'/sujets-cbs/projet/');
+define ('ROOT', $root.'/sujets-cbs/projet/');
 
 define('MODEL_HOST', HOST.'model/');
 define('MODEL_ROOT', ROOT.'model/');
