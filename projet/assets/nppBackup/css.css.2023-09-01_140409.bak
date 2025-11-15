@@ -1,0 +1,97 @@
+/* Ne toucher pas aux selecteurs " * " et " body "  ces valeurs attribuer sont des valeur par defauts utiles */ 
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;/* elimine certains effets qu'ajoute par defaut les navigateurs */
+    list-style: none; 
+}
+body
+{
+   
+    margin: 0;/* elimination des espaces tout aux bordures de la page car certain navigateurs mettent des valeurs de margin non voulu a notre page*/
+    padding: 0;/*elimination des espaces inutile a l'interieur de la boite de page car certain navigateurs mettent des valeurs de padding non voulu a notre page*/
+}
+
+.BanniereSuperieur
+{
+    margin: 0;
+    padding: 5px;
+    background-color: rgba(0, 11, 41, 0.828);
+    color: white;
+    width: 100%;
+    height: 50px;
+    
+   
+}
+
+    .BanniereSuperieur #logo_banniereSuperieur
+    {
+        float: left;
+        max-width: 50px;
+        max-height: 50px;
+        border-radius: 50%;
+        object-fit:cover;
+        border: solid 3px black; 
+        position: absolute;
+        top: 0;
+    }
+        .BanniereSuperieur ul
+        {
+            padding: 0px;
+            margin-left: 40px;
+            border: 2px solid rgb(13, 230, 23);
+            max-width: 45%;
+            position: relative;
+            top: 6px;
+        }
+            .BanniereSuperieur ul li
+            {
+                list-style: none;
+                display: inline-block;
+                text-decoration: rgb(8, 189, 8);
+                margin-left: 20px;
+                /*border: 2px solid yellow;*/
+            }
+                .BanniereSuperieur ul li a
+                {
+                    color: white;
+                    text-decoration: none;
+                    letter-spacing: 0.1rem;
+                }
+                .BanniereSuperieur ul li a:hover{
+                    color: #ffd358;
+                    text-decoration: underline;
+                }
+
+                .icone-menu {
+                    position:absolute;
+                    height: 35px;
+                    width: 35px;
+                    right: 20px;
+                }
+				
+#barreDeRechercheBanniere
+{
+    position: absolute;
+    padding: 20px;
+    text-align: right;
+    margin: -30px;
+    width: 100%;
+    right: 75px;
+	border:2px solid red;
+}
+                
+
+
+
+.banniereInferieur
+{
+    margin: 0;
+    margin-top: 10px;
+    padding: 5px;
+    background-color: rgba(0, 11, 41, 0.828);
+    color: white;
+    width: 100%;
+    height: 40px;
+}

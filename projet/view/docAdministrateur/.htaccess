@@ -1,0 +1,7 @@
+<?php
+    include_once(ROOT."_config.php");
+?>
+AuthName "ce dossier est reserve a l'administrateur identification requise"
+AuthType Basic
+AuthUserFile "<?php echo VIEW_ROOT."docAdministrateur/.htpasswd"; ?>"
+Require valid-user

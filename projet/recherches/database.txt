@@ -1,0 +1,472 @@
+-- =====================================================
+-- SCRIPT SQL POUR LA BASE DE DONNÉES EEC
+-- (Exercices Et Corrections - Cefod Business School)
+-- =====================================================
+-- 
+-- Ce script permet de recréer entièrement la base de données
+-- avec toutes ses tables et leurs structures.
+-- 
+-- UTILISATION :
+-- 1. Créer la base de données : CREATE DATABASE eec;
+-- 2. Utiliser la base : USE eec;
+-- 3. Exécuter ce script complet
+-- 
+-- ORDRE DE CRÉATION : Tables sans dépendances d'abord, puis avec dépendances
+-- =====================================================
+
+-- =====================================================
+-- 1. TABLES SANS DÉPENDANCES (Ordre de création)
+-- =====================================================
+
+-- -----------------------------------------------------
+-- Table : admin
+-- Description : Gestion des administrateurs de la plateforme
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS admin;
+CREATE TABLE admin (
+    id_adm INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique de l\'administrateur',
+    email_adm VARCHAR(255) NOT NULL UNIQUE COMMENT 'Email de l\'administrateur',
+    mdp_adm VARCHAR(255) NOT NULL COMMENT 'Mot de passe hashé de l\'administrateur',
+    role_adm ENUM('administrateur', 'super_root') DEFAULT 'administrateur' COMMENT 'Rôle de l\'administrateur',
+    date_creation_adm TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Date de création du compte admin',
+    date_modification_adm TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date de dernière modification'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des administrateurs';
+
+-- -----------------------------------------------------
+-- Table : superviseur
+-- Description : Gestion des superviseurs de la plateforme
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS superviseur;
+CREATE TABLE superviseur (
+    id_sup INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique du superviseur',
+    email_sup VARCHAR(255) NOT NULL UNIQUE COMMENT 'Email du superviseur',
+    mdp_sup VARCHAR(255) NOT NULL COMMENT 'Mot de passe hashé du superviseur',
+    pseudo_sup varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des superviseurs';
+
+-- -----------------------------------------------------
+-- Table : utilisateurs
+-- Description : Gestion des utilisateurs normaux de la plateforme
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS utilisateurs;
+CREATE TABLE utilisateurs (
+    id_uti INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique de l\'utilisateur',
+    identifiant_etu VARCHAR(100) UNIQUE COMMENT 'Identifiant de l\'étudiant (pour CBS)',
+    prenom_etu VARCHAR(100) COMMENT 'Prénom de l\'étudiant',
+    nom_complet VARCHAR(255) COMMENT 'Nom complet de l\'utilisateur',
+    email_uti VARCHAR(255) NOT NULL UNIQUE COMMENT 'Email de l\'utilisateur',
+    mdp_uti VARCHAR(255) NOT NULL COMMENT 'Mot de passe hashé de l\'utilisateur',
+    confirmation_mdp_uti VARCHAR(255) COMMENT 'Token de confirmation du mot de passe',
+    confirmation_compte_uti TIMESTAMP NULL COMMENT 'Date de confirmation du compte (NULL si non confirmé)',
+    reset_token VARCHAR(255) COMMENT 'Token pour réinitialisation du mot de passe',
+    reset_at TIMESTAMP NULL COMMENT 'Date de demande de réinitialisation',
+    connexion_auto VARCHAR(255) COMMENT 'Token pour connexion automatique',
+    image_uti VARCHAR(500) COMMENT 'Chemin vers l\'image de profil',
+    date_creation_uti TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Date de création du compte',
+    date_modification_uti TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date de dernière modification'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des utilisateurs';
+
+-- -----------------------------------------------------
+-- Table : matieres
+-- Description : Matières pour les exercices administrateurs
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS matieres;
+CREATE TABLE matieres (
+    id_mat INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique de la matière',
+    nom_mat VARCHAR(255) NOT NULL COMMENT 'Nom de la matière',
+    date_creation_mat TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Date de création de la matière',
+    date_modification_mat TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date de dernière modification'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des matières pour exercices admin';
+
+-- -----------------------------------------------------
+-- Table : matieres_utilisateurs
+-- Description : Matières pour les exercices des utilisateurs normaux
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS matieres_utilisateurs;
+CREATE TABLE matieres_utilisateurs (
+    id_mat_uti INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique de la matière utilisateur',
+    nom_mat_uti VARCHAR(255) NOT NULL COMMENT 'Nom de la matière utilisateur',
+    date_creation_mat_uti TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Date de création de la matière',
+    date_modification_mat_uti TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date de dernière modification'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des matières pour exercices utilisateurs';
+
+-- -----------------------------------------------------
+-- Table : etudiant_cbs
+-- Description : Étudiants CBS confirmés et actifs
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS etudiant_cbs;
+CREATE TABLE etudiant_cbs (
+    id_etu INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique de l\'étudiant CBS',
+    prenom_etu VARCHAR(100) NOT NULL COMMENT 'Prénom de l\'étudiant',
+    email_etu VARCHAR(255) NOT NULL UNIQUE COMMENT 'Email de l\'étudiant',
+    identifiant_etu VARCHAR(100) NOT NULL UNIQUE COMMENT 'Identifiant de connexion CBS',
+    compte_confirme_etu BOOLEAN DEFAULT FALSE COMMENT 'Statut de confirmation du compte',
+    carte_recto_etu VARCHAR(500) COMMENT 'Chemin vers l\'image recto de la carte',
+    carte_verso_etu VARCHAR(500) COMMENT 'Chemin vers l\'image verso de la carte',
+    date_inscription_etu TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Date d\'inscription',
+    date_confirmation_etu TIMESTAMP NULL COMMENT 'Date de confirmation du compte',
+    date_modification_etu TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date de dernière modification'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des étudiants CBS confirmés';
+
+-- -----------------------------------------------------
+-- Table : etudiant_cbs_temp
+-- Description : Demandes d'inscription CBS en attente de validation
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS etudiant_cbs_temp;
+CREATE TABLE etudiant_cbs_temp (
+    id_etu INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique de la demande',
+    prenom_etu VARCHAR(100) NOT NULL COMMENT 'Prénom de l\'étudiant',
+    email_etu VARCHAR(255) NOT NULL COMMENT 'Email de l\'étudiant',
+    carte_recto_etu VARCHAR(500) COMMENT 'Chemin vers l\'image recto de la carte',
+    carte_verso_etu VARCHAR(500) COMMENT 'Chemin vers l\'image verso de la carte',
+    compte_confirme_etu TINYINT(1) DEFAULT 0, -- 0 = non confirmé, 1 = confirmé
+    identifiant_etu VARCHAR(100) COMMENT 'Identifiant généré pour l\'étudiant',
+    date_inscription_etu TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Date de la demande d\'inscription',
+    statut_demande ENUM('en_attente', 'approuvee', 'rejetee') DEFAULT 'en_attente' COMMENT 'Statut de la demande'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des demandes d\'inscription CBS en attente';
+
+-- =====================================================
+-- 2. TABLES AVEC DÉPENDANCES (Ordre respectant les clés étrangères)
+-- =====================================================
+
+-- -----------------------------------------------------
+-- Table : exercices
+-- Description : Exercices créés par les administrateurs
+-- Dépend de : matieres
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS exercices;
+CREATE TABLE exercices (
+    id_exe INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique de l\'exercice',
+    titre_exe VARCHAR(255) NOT NULL COMMENT 'Titre de l\'exercice',
+    libelle_exe TEXT COMMENT 'Description/libellé de l\'exercice',
+    fichier_exe VARCHAR(500) COMMENT 'Chemin vers le fichier PDF de l\'exercice',
+    date_pub_exe DATE DEFAULT (CURDATE()) COMMENT 'Date de publication de l\'exercice',
+    heure_pub_exe TIME DEFAULT (CURTIME()) COMMENT 'Heure de publication de l\'exercice',
+    id_mat INT NOT NULL COMMENT 'Identifiant de la matière associée',
+    date_creation_exe TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Date de création',
+    date_modification_exe TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date de dernière modification',
+    
+    FOREIGN KEY (id_mat) REFERENCES matieres(id_mat) ON DELETE CASCADE ON UPDATE CASCADE,
+    INDEX idx_exercices_matiere (id_mat),
+    INDEX idx_exercices_date (date_pub_exe)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des exercices administrateurs';
+
+-- -----------------------------------------------------
+-- Table : exercices_utilisateurs
+-- Description : Exercices créés par les utilisateurs normaux
+-- Dépend de : matieres_utilisateurs
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS exercices_utilisateurs;
+CREATE TABLE exercices_utilisateurs (
+    id_exe_uti INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique de l\'exercice utilisateur',
+    titre_exe_uti VARCHAR(255) NOT NULL COMMENT 'Titre de l\'exercice utilisateur',
+    libelle_exe_uti TEXT COMMENT 'Description/libellé de l\'exercice utilisateur',
+    date_pub_exe_uti DATE DEFAULT (CURDATE()) COMMENT 'Date de publication de l\'exercice',
+    heure_pub_exe_uti TIME DEFAULT (CURTIME()) COMMENT 'Heure de publication de l\'exercice',
+    id_mat_uti INT NOT NULL COMMENT 'Identifiant de la matière utilisateur associée',
+    id_uti INT COMMENT 'Identifiant de l\'utilisateur créateur',
+    date_creation_exe_uti TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Date de création',
+    date_modification_exe_uti TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date de dernière modification',
+    
+    FOREIGN KEY (id_mat_uti) REFERENCES matieres_utilisateurs(id_mat_uti) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_uti) REFERENCES utilisateurs(id_uti) ON DELETE SET NULL ON UPDATE CASCADE,
+    INDEX idx_exercices_utilisateurs_matiere (id_mat_uti),
+    INDEX idx_exercices_utilisateurs_utilisateur (id_uti),
+    INDEX idx_exercices_utilisateurs_date (date_pub_exe_uti)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des exercices utilisateurs';
+
+-- -----------------------------------------------------
+-- Table : corrections
+-- Description : Corrections des exercices administrateurs
+-- Dépend de : exercices
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS corrections;
+CREATE TABLE corrections (
+    id_cor INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique de la correction',
+    titre_cor VARCHAR(255) NOT NULL COMMENT 'Titre de la correction',
+    libelle_cor TEXT COMMENT 'Description/libellé de la correction',
+    fichier_cor VARCHAR(500) COMMENT 'Chemin vers le fichier PDF de la correction',
+    date_pub_cor DATE DEFAULT (CURDATE()) COMMENT 'Date de publication de la correction',
+    heure_pub_cor TIME DEFAULT (CURTIME()) COMMENT 'Heure de publication de la correction',
+    id_exe INT NOT NULL COMMENT 'Identifiant de l\'exercice associé',
+    date_creation_cor TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Date de création',
+    date_modification_cor TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date de dernière modification',
+    
+    FOREIGN KEY (id_exe) REFERENCES exercices(id_exe) ON DELETE CASCADE ON UPDATE CASCADE,
+    INDEX idx_corrections_exercice (id_exe),
+    INDEX idx_corrections_date (date_pub_cor)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des corrections administrateurs';
+
+-- -----------------------------------------------------
+-- Table : corrections_utilisateurs
+-- Description : Corrections des exercices utilisateurs
+-- Dépend de : exercices_utilisateurs
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS corrections_utilisateurs;
+CREATE TABLE corrections_utilisateurs (
+    id_cor_uti INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique de la correction utilisateur',
+    titre_cor_uti VARCHAR(255) NOT NULL COMMENT 'Titre de la correction utilisateur',
+    libelle_cor_uti TEXT COMMENT 'Description/libellé de la correction utilisateur',
+    date_pub_cor_uti DATE DEFAULT (CURDATE()) COMMENT 'Date de publication de la correction',
+    heure_pub_cor_uti TIME DEFAULT (CURTIME()) COMMENT 'Heure de publication de la correction',
+    id_exe_uti INT NOT NULL COMMENT 'Identifiant de l\'exercice utilisateur associé',
+    date_creation_cor_uti TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Date de création',
+    date_modification_cor_uti TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date de dernière modification',
+    
+    FOREIGN KEY (id_exe_uti) REFERENCES exercices_utilisateurs(id_exe_uti) ON DELETE CASCADE ON UPDATE CASCADE,
+    INDEX idx_corrections_utilisateurs_exercice (id_exe_uti),
+    INDEX idx_corrections_utilisateurs_date (date_pub_cor_uti)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des corrections utilisateurs';
+
+-- =====================================================
+-- 3. TABLES DYNAMIQUES CBS (Filières)
+-- =====================================================
+-- 
+-- Ces tables stockent les sujets PDF pour chaque filière CBS
+-- Structure commune pour toutes les filières avec les types d'examens :
+-- CC (Contrôle Continu), SN (Session Normale), SR (Session de Rattrapage)
+-- BTS (Brevet de Technicien Supérieur), TD (Travaux Dirigés), TP (Travaux Pratiques)
+-- =====================================================
+
+-- -----------------------------------------------------
+-- Table : gi (Gestion Informatique)
+-- Description : Sujets PDF pour la filière Gestion Informatique
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS gi;
+CREATE TABLE gi (
+    id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
+    matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
+    annee YEAR COMMENT 'Année du sujet',
+    cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
+    sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
+    sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
+    bts VARCHAR(150) COMMENT 'Chemin vers le fichier PDF BTS (Brevet de Technicien Supérieur)',
+    td VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TD (Travaux Dirigés)',
+    tp VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TP (Travaux Pratiques)',
+    
+    CONSTRAINT pk_gi_id PRIMARY KEY (id),
+    INDEX idx_gi_matiere (matiere),
+    INDEX idx_gi_annee (annee)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des sujets PDF pour la filière Gestion Informatique';
+
+-- -----------------------------------------------------
+-- Table : scienceid (Sciences de l'Information et Documentation)
+-- Description : Sujets PDF pour la filière Sciences de l'Information et Documentation
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS scienceid;
+CREATE TABLE scienceid (
+    id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
+    matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
+    annee YEAR COMMENT 'Année du sujet',
+    cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
+    sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
+    sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
+    bts VARCHAR(150) COMMENT 'Chemin vers le fichier PDF BTS (Brevet de Technicien Supérieur)',
+    td VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TD (Travaux Dirigés)',
+    tp VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TP (Travaux Pratiques)',
+    
+    CONSTRAINT pk_scienceid_id PRIMARY KEY (id),
+    INDEX idx_scienceid_matiere (matiere),
+    INDEX idx_scienceid_annee (annee)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des sujets PDF pour la filière Sciences de l\'Information et Documentation';
+
+-- -----------------------------------------------------
+-- Table : dcj (Droit et Communication Juridique)
+-- Description : Sujets PDF pour la filière Droit et Communication Juridique
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS dcj;
+CREATE TABLE dcj (
+    id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
+    matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
+    annee YEAR COMMENT 'Année du sujet',
+    cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
+    sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
+    sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
+    bts VARCHAR(150) COMMENT 'Chemin vers le fichier PDF BTS (Brevet de Technicien Supérieur)',
+    td VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TD (Travaux Dirigés)',
+    tp VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TP (Travaux Pratiques)',
+    
+    CONSTRAINT pk_dcj_id PRIMARY KEY (id),
+    INDEX idx_dcj_matiere (matiere),
+    INDEX idx_dcj_annee (annee)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des sujets PDF pour la filière Droit et Communication Juridique';
+
+-- -----------------------------------------------------
+-- Table : edd (Économie et Développement Durable)
+-- Description : Sujets PDF pour la filière Économie et Développement Durable
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS edd;
+CREATE TABLE edd (
+    id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
+    matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
+    annee YEAR COMMENT 'Année du sujet',
+    cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
+    sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
+    sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
+    bts VARCHAR(150) COMMENT 'Chemin vers le fichier PDF BTS (Brevet de Technicien Supérieur)',
+    td VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TD (Travaux Dirigés)',
+    tp VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TP (Travaux Pratiques)',
+    
+    CONSTRAINT pk_edd_id PRIMARY KEY (id),
+    INDEX idx_edd_matiere (matiere),
+    INDEX idx_edd_annee (annee)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des sujets PDF pour la filière Économie et Développement Durable';
+
+-- -----------------------------------------------------
+-- Table : lt (Lettres et Traduction)
+-- Description : Sujets PDF pour la filière Lettres et Traduction
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS lt;
+CREATE TABLE lt (
+    id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
+    matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
+    annee YEAR COMMENT 'Année du sujet',
+    cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
+    sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
+    sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
+    bts VARCHAR(150) COMMENT 'Chemin vers le fichier PDF BTS (Brevet de Technicien Supérieur)',
+    td VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TD (Travaux Dirigés)',
+    tp VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TP (Travaux Pratiques)',
+    
+    CONSTRAINT pk_lt_id PRIMARY KEY (id),
+    INDEX idx_lt_matiere (matiere),
+    INDEX idx_lt_annee (annee)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des sujets PDF pour la filière Lettres et Traduction';
+
+-- -----------------------------------------------------
+-- Table : mcd (Marketing et Communication Digitale)
+-- Description : Sujets PDF pour la filière Marketing et Communication Digitale
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS mcd;
+CREATE TABLE mcd (
+    id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
+    matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
+    annee YEAR COMMENT 'Année du sujet',
+    cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
+    sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
+    sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
+    bts VARCHAR(150) COMMENT 'Chemin vers le fichier PDF BTS (Brevet de Technicien Supérieur)',
+    td VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TD (Travaux Dirigés)',
+    tp VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TP (Travaux Pratiques)',
+    
+    CONSTRAINT pk_mcd_id PRIMARY KEY (id),
+    INDEX idx_mcd_matiere (matiere),
+    INDEX idx_mcd_annee (annee)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des sujets PDF pour la filière Marketing et Communication Digitale';
+
+-- -----------------------------------------------------
+-- Table : cf (Comptabilité et Finance)
+-- Description : Sujets PDF pour la filière Comptabilité et Finance
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS cf;
+CREATE TABLE cf (
+    id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
+    matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
+    annee YEAR COMMENT 'Année du sujet',
+    cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
+    sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
+    sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
+    bts VARCHAR(150) COMMENT 'Chemin vers le fichier PDF BTS (Brevet de Technicien Supérieur)',
+    td VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TD (Travaux Dirigés)',
+    tp VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TP (Travaux Pratiques)',
+    
+    CONSTRAINT pk_cf_id PRIMARY KEY (id),
+    INDEX idx_cf_matiere (matiere),
+    INDEX idx_cf_annee (annee)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des sujets PDF pour la filière Comptabilité et Finance';
+
+-- -----------------------------------------------------
+-- Table : grh (Gestion des Ressources Humaines)
+-- Description : Sujets PDF pour la filière Gestion des Ressources Humaines
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS grh;
+CREATE TABLE grh (
+    id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
+    matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
+    annee YEAR COMMENT 'Année du sujet',
+    cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
+    sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
+    sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
+    bts VARCHAR(150) COMMENT 'Chemin vers le fichier PDF BTS (Brevet de Technicien Supérieur)',
+    td VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TD (Travaux Dirigés)',
+    tp VARCHAR(150) COMMENT 'Chemin vers le fichier PDF TP (Travaux Pratiques)',
+    
+    CONSTRAINT pk_grh_id PRIMARY KEY (id),
+    INDEX idx_grh_matiere (matiere),
+    INDEX idx_grh_annee (annee)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des sujets PDF pour la filière Gestion des Ressources Humaines';
+
+-- 
+-- =====================================================
+-- 4. DONNÉES INITIALES (En commentaires pour choix manuel)
+-- =====================================================
+
+-- =====================================================
+-- ADMINISTRATEUR PAR DÉFAUT
+-- =====================================================
+-- 
+-- Pour créer un administrateur par défaut, décommentez et modifiez :
+-- 
+-- INSERT INTO admin (email_adm, mdp_adm, role_adm) VALUES 
+-- ('admin@eec.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'administrateur');
+-- 
+-- Mot de passe par défaut : "password" (à changer impérativement)
+-- Email à modifier selon vos besoins
+-- 
+-- =====================================================
+-- SUPERVISEUR PAR DÉFAUT
+-- =====================================================
+-- 
+-- Pour créer un superviseur par défaut, décommentez et modifiez :
+-- 
+-- INSERT INTO superviseur (email_sup, mdp_sup, role_sup) VALUES 
+-- ('superviseur@eec.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'superviseur');
+-- 
+-- Mot de passe par défaut : "password" (à changer impérativement)
+-- Email à modifier selon vos besoins
+-- 
+-- =====================================================
+-- MATIÈRES D'EXEMPLE
+-- =====================================================
+-- 
+-- Pour ajouter des matières d'exemple, décommentez :
+-- 
+-- INSERT INTO matieres (nom_mat) VALUES 
+-- ('Mathématiques'),
+-- ('Informatique'),
+-- ('Gestion'),
+-- ('Comptabilité'),
+-- ('Marketing');
+-- 
+-- INSERT INTO matieres_utilisateurs (nom_mat_uti) VALUES 
+-- ('Mathématiques'),
+-- ('Informatique'),
+-- ('Gestion'),
+-- ('Comptabilité'),
+-- ('Marketing');
+-- 
+-- =====================================================
+-- ÉTUDIANTS CBS D'EXEMPLE
+-- =====================================================
+-- 
+-- Pour ajouter des étudiants CBS d'exemple, décommentez :
+-- 
+-- INSERT INTO etudiant_cbs (prenom_etu, email_etu, identifiant_etu, compte_confirme_etu) VALUES 
+-- ('jean', 'jean@cbs.com', 'jean001', TRUE),
+-- ('marie', 'marie@cbs.com', 'marie002', TRUE),
+-- ('pierre', 'pierre@cbs.com', 'pierre003', TRUE);
+-- 
+-- =====================================================
+-- FIN DU SCRIPT
+-- =====================================================
+-- 
+-- Ce script a été généré automatiquement à partir de l'analyse du code source.
+-- Toutes les tables ont été créées avec leurs contraintes et index appropriés.
+-- 
+-- Pour utiliser ce script :
+-- 1. Créer la base de données : CREATE DATABASE eec CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- 2. Utiliser la base : USE eec;
+-- 3. Exécuter ce script complet
+-- 4. Décommenter et modifier les données initiales selon vos besoins
+-- 
+-- =====================================================

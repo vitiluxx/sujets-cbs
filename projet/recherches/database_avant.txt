@@ -1,0 +1,244 @@
+mysql -u root -p
+create database eec;
+
+use exercicesEtCorriges;
+
+CREATE TABLE admin(
+	id_adm INT auto_increment NOT NULL,
+	email_adm VARCHAR(100) NOT NULL,
+	mdp_adm VARCHAR(255) NOT NULL,
+	role_adm VARCHAR (50) NOT NULL,
+	CONSTRAINT pk_id_adm PRIMARY KEY(id_adm)
+	)ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE superviseur (
+  id_sup int(11) auto_increment NOT NULL,
+  email_sup varchar(50) DEFAULT NULL,
+  mdp_sup varchar(50) DEFAULT NULL,
+  pseudo_sup varchar(50) DEFAULT NULL,
+  CONSTRAINT pk_id_sup PRIMARY KEY (id_sup)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;	
+
+CREATE TABLE etudiant_cbs (
+	id_etu INT auto_increment NOT NULL,
+	prenom_etu VARCHAR(20) NOT NULL,
+	email_etu VARCHAR(50) NOT NULL,
+    carte_recto_etu VARCHAR(255) NOT NULL,
+    carte_verso_etu VARCHAR(255) NOT NULL,
+    compte_confirme_etu TINYINT(1) DEFAULT 0, -- 0 = non confirmé, 1 = confirmé
+	identifiant_etu VARCHAR(50) UNIQUE,
+    date_inscription_etu TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT pk_id_etu PRIMARY KEY (id_etu)
+)ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE etudiant_cbs_temp (
+	id_etu INT auto_increment NOT NULL,
+	prenom_etu VARCHAR(20) NOT NULL,
+	email_etu VARCHAR(50) NOT NULL,
+    carte_recto_etu VARCHAR(255) NOT NULL,
+    carte_verso_etu VARCHAR(255) NOT NULL,
+    compte_confirme_etu TINYINT(1) DEFAULT 0, -- 0 = non confirmé, 1 = confirmé
+	identifiant_etu VARCHAR(50) UNIQUE,
+    date_inscription_etu TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT pk_id_etu PRIMARY KEY (id_etu)
+)ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+
+CREATE TABLE utilisateurs (
+  id_uti int(100) NOT NULL,
+  nom_uti varchar(100) NOT NULL,
+  prenom_uti varchar(100) NOT NULL,
+  email_uti varchar(255) NOT NULL,
+  mdp_uti varchar(255) NOT NULL,
+  confirmation_mdp_uti varchar(255) NOT NULL,
+  confirmation_compte_uti datetime DEFAULT NULL,
+  reset_token varchar(60) DEFAULT NULL,
+  reset_at datetime DEFAULT NULL,
+  connexion_auto varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+create table matieres(
+	id_mat int auto_increment not null,
+	nom_mat varchar(50) not null,
+	CONSTRAINT pk_id_mat PRIMARY KEY(id_mat))
+	ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+create table exercices(
+	id_exe int auto_increment not null,
+	titre_exe varchar(100) not null,
+	libelle_exe TEXT not null,
+	fichier_exe varchar(150), 
+	date_pub_exe date not null,
+	heure_pub_exe TIME not null,
+	id_mat INT not null,
+	CONSTRAINT pk_id_exe PRIMARY KEY(id_exe),
+	constraint fk_id_mat foreign key(id_mat) references matieres(id_mat) ON DELETE CASCADE)
+	ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE corrections(
+	id_cor INT auto_increment NOT NULL,
+	titre_cor varchar(100) not null,
+	libelle_cor TEXT NOT NULL,
+	fichier_cor varchar(150),
+	date_pub_cor date not null,
+	heure_pub_cor TIME not null,
+	id_exe INT NOT NULL,
+	CONSTRAINT pk_id_cor PRIMARY KEY(id_cor),
+	CONSTRAINT fk_id_exe FOREIGN KEY(id_exe) references exercices(id_exe) ON DELETE CASCADE)
+	ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+create table matieres_utilisateurs(
+	id_mat_uti int auto_increment not null,
+	nom_mat_uti varchar(50) not null,
+	CONSTRAINT pk_id_mat_uti PRIMARY KEY(id_mat_uti))
+	ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+create table exercices_utilisateurs(
+	id_exe_uti int auto_increment not null,
+	titre_exe_uti varchar(100) not null,
+	libelle_exe_uti TEXT not null, 
+	date_pub_exe_uti date not null,
+	heure_pub_exe_uti TIME not null,
+	id_mat_uti INT not null,
+	id_uti INT NULL,
+	CONSTRAINT pk_id_exe_uti PRIMARY KEY(id_exe_uti),
+	constraint fk_id_mat_uti foreign key(id_mat_uti) references matieres_utilisateurs(id_mat_uti) ON DELETE CASCADE ON UPDATE CASCADE)
+	ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE corrections_utilisateurs(
+	id_cor_uti INT auto_increment NOT NULL,
+	titre_cor_uti varchar(100) not null,
+	libelle_cor_uti TEXT NOT NULL,
+	date_pub_cor_uti date not null,
+	heure_pub_cor_uti TIME not null,
+	id_exe_uti INT NOT NULL,
+	CONSTRAINT pk_id_cor_uti PRIMARY KEY(id_cor_uti),
+	CONSTRAINT fk_id_exe_uti FOREIGN KEY(id_exe_uti) references exercices_utilisateurs(id_exe_uti) ON DELETE CASCADE ON UPDATE CASCADE)
+	ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE gi(
+	id int auto_increment not null,
+	matiere VARCHAR(50) not null,
+	annee YEAR,
+	cc varchar(150),
+	sn varchar(150),
+	sr varchar(150),
+	bts varchar(150),
+	td varchar(150),
+	tp varchar(150),
+	CONSTRAINT pk_id PRIMARY KEY(id))
+ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE scienceid(
+	id int auto_increment not  null,
+	matiere VARCHAR(50) not  null,
+	annee YEAR,
+	cc varchar(150),
+	sn varchar(150),
+	sr varchar(150),
+	bts varchar(150),
+	td varchar(150),
+	tp varchar(150),
+	CONSTRAINT pk_id PRIMARY KEY(id))
+ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE dcj(
+	id int auto_increment not  null,
+	matiere VARCHAR(50) not  null,
+	annee YEAR,
+	cc varchar(150),
+	sn varchar(150),
+	sr varchar(150),
+	bts varchar(150),
+	td varchar(150),
+	tp varchar(150),
+	CONSTRAINT pk_id PRIMARY KEY(id))
+ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE edd(
+	id int auto_increment not  null,
+	matiere VARCHAR(50) not  null,
+	annee YEAR,
+	cc varchar(150),
+	sn varchar(150),
+	sr varchar(150),
+	bts varchar(150),
+	td varchar(150),
+	tp varchar(150),
+	CONSTRAINT pk_id PRIMARY KEY(id))
+ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE lt(
+	id int auto_increment not  null,
+	matiere VARCHAR(50) not  null,
+	annee YEAR,
+	cc varchar(150),
+	sn varchar(150),
+	sr varchar(150),
+	bts varchar(150),
+	td varchar(150),
+	tp varchar(150),
+	CONSTRAINT pk_id PRIMARY KEY(id))
+ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+
+CREATE TABLE mcd(
+	id int auto_increment not  null,
+	matiere VARCHAR(50) not  null,
+	annee YEAR,
+	cc varchar(150),
+	sn varchar(150),
+	sr varchar(150),
+	bts varchar(150),
+	td varchar(150),
+	tp varchar(150),
+	CONSTRAINT pk_id PRIMARY KEY(id))
+ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE cf(
+	id int auto_increment not  null,
+	matiere VARCHAR(50) not  null,
+	annee YEAR,
+	cc varchar(150),
+	sn varchar(150),
+	sr varchar(150),
+	bts varchar(150),
+	td varchar(150),
+	tp varchar(150),
+	CONSTRAINT pk_id PRIMARY KEY(id))
+ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+
+CREATE TABLE grh(
+	id int auto_increment not  null,
+	matiere VARCHAR(50) not  null,
+	annee YEAR,
+	cc varchar(150),
+	sn varchar(150),
+	sr varchar(150),
+	bts varchar(150),
+	td varchar(150),
+	tp varchar(150),
+	CONSTRAINT pk_id PRIMARY KEY(id))
+ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+
+===============================================================
+INFOS SUPLLEMENTAIRES
+===============================================================
+alter table matieres rename as matiere;
+drop database exercicesEtCorriges;
+===============================================================
+changer l'entite 
+drop table admin;
+drop table superviseur;
+drop table utilisateur;
+drop table zonesuperviseur;
+drop table matieres;
+drop table exercices;
+drop table corrections;
+
+
+
+
+CODE SPECIAL POUR INSERER UN ADMIN DANS  MYSQL AVEC UN MOT DE 
