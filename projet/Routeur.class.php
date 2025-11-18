@@ -22,6 +22,7 @@ class Routeur
                       
                       "demandesinscription.php" =>                          ["controller" => "ControllerAdmin", "method" => "affichePageDemandesInscription"], 
                       "listeetudiantsinscrits.php" =>                          ["controller" => "ControllerAdmin", "method" => "affichePageListeEtudiantsInscrits"], 
+                      "sujetspdf.php" =>                                       ["controller" => "ControllerAdmin", "method" => "affichePageSujetsPdf"], 
                     //   "confirmerinscription.php" =>                         ["controller" => "ControllerAdmin", "method" => "affichePageConfirmerInscription"], 
                     //   "supprimerdemandeinscription.php" =>                         ["controller" => "ControllerAdmin", "method" => "affichePageSupprimerDemandeInscription"], 
                       "form_publierEEC.php" =>                              ["controller" => "ControllerAdmin", "method" => "affichePageForm_publierEEC"],                      
@@ -72,6 +73,7 @@ MEME CHOSE JUSTE C'EST UNE DUPLICATION POUR QUE MEME SI L'ON DEMANDE UNE PAGE SA
                       "dashboard" =>                                    ["controller" => "ControllerAdmin", "method" => "affichePageDemandesInscription"],                      
                       "demandesinscription" =>                          ["controller" => "ControllerAdmin", "method" => "affichePageDemandesInscription"], 
                       "listeetudiantsinscrits" =>                          ["controller" => "ControllerAdmin", "method" => "affichePageListeEtudiantsInscrits"], 
+                      "sujetspdf" =>                                       ["controller" => "ControllerAdmin", "method" => "affichePageSujetsPdf"], 
                       "confirmerinscription" =>                         ["controller" => "ControllerAdmin", "method" => "affichePageConfirmerInscription"], 
                       "supprimerdemandeinscription" =>                         ["controller" => "ControllerAdmin", "method" => "affichePageSupprimerDemandeInscription"], 
 

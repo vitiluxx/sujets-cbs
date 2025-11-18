@@ -14,7 +14,7 @@
 class ControllerAdmin
 {
     /*============================================================================================================================ */  
-    public function affichePageDemandesInscription()
+    public function affichePagedemandesInscription()
     {
         // Connexion à la base de données
         require("connexionBd.php");
@@ -88,7 +88,7 @@ class ControllerAdmin
                     //     // Annuler la transaction en cas d'erreur d'envoi d'email
                     //     $connexionBd->rollBack();
                     //     $_SESSION['flash']['error'] = "Erreur lors de l'envoi de l'email : " . $mail->ErrorInfo;
-                    //     header("Location: " . HOST . "demandesinscription");
+                    //     header("Location: " . HOST . "demandesInscription");
                     //     exit();
                     // }
                 
@@ -102,7 +102,7 @@ class ControllerAdmin
                     </script>
                     <?php
 
-                    header("Location: " . HOST . "demandesinscription");
+                    header("Location: " . HOST . "demandesInscription");
                     exit();
                 } catch (PDOException $e) {
                     // Annuler la transaction en cas d'erreur
@@ -115,7 +115,7 @@ class ControllerAdmin
                     </script>
                     <?php
 
-                    header("Location: " . HOST . "demandesinscription");
+                    header("Location: " . HOST . "demandesInscription");
                     exit();
                 }
             } else {
@@ -124,7 +124,7 @@ class ControllerAdmin
                     alert("Données invalides.");
                 </script>
                 <?php
-                header("Location: " . HOST . "demandesinscription");
+                header("Location: " . HOST . "demandesInscription");
                 exit();
             }
         }
@@ -144,7 +144,7 @@ class ControllerAdmin
                         alert("Demande supprimée avec succès");
                     </script>
                     <?php
-                    header("Location: " . HOST . "demandesinscription");
+                    header("Location: " . HOST . "demandesInscription");
                     exit();
                 } catch (PDOException $e)
                 {
@@ -153,7 +153,7 @@ class ControllerAdmin
                         alert("Erreur de base de données : " . $e->getMessage(););
                     </script>
                     <?php
-                    header("Location: " . HOST . "demandesinscription");
+                    header("Location: " . HOST . "demandesInscription");
                     exit();
                 }
             } else {
@@ -162,12 +162,12 @@ class ControllerAdmin
                         alert("Données invalides.");
                     </script>
                 <?php
-                header("Location: " . HOST . "demandesinscription");
+                header("Location: " . HOST . "demandesInscription");
                 exit();
             }
         }
 
-        include(DOC_ADMINISTRATEUR . "demandesinscription.php");
+        include(DOC_ADMINISTRATEUR . "demandesInscription.php");
     
     }
     /*============================================================================================================================ */  
@@ -243,6 +243,172 @@ class ControllerAdmin
         }
       
         include(DOC_ADMINISTRATEUR."zoneAdmin.php");
+        ExercicesEtCorrections::cacheLesMenusReserverAdmin();
+    }
+
+/*============================================================================================================================ */
+
+    public function affichePageSujetsPdf()
+    {
+        require("connexionBd.php");
+        require(MODEL_ROOT."ExercicesEtCorrections.class.php");
+        require(MODEL_ROOT."fonctions.php");
+        securiteAdmin();
+
+        $eec = new ExercicesEtCorrections($connexionBd);
+        $filieres = [
+            "gi" => "Génie Informatique",
+            "mcd" => "Marketing et Communication Digitale",
+            "cf" => "Comptabilité et Finance",
+            "lt" => "Logistique Transport",
+            "edd" => "Economie et Développement Durable",
+            "grh" => "Gestion des Ressources Humaines",
+            "dcj" => "Droit et Carrière Judiciaire",
+            "scienceid" => "Sciences de l'Information et de la Documentation"
+        ];
+        $examens = ['cc', 'sn', 'sr', 'bts', 'td', 'tp'];
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action'])) {
+            $action = $_POST['action'];
+            $id = isset($_POST['id']) ? (int)$_POST['id'] : null;
+            $filiere = $_POST['filiere'] ?? '';
+
+            if (!$id || !array_key_exists($filiere, $filieres)) {
+                ?>
+                <script>
+                    alert("Données invalides.");
+                </script>
+                <?php
+                header("Refresh: 0; url=" . HOST . "sujetspdf");
+                exit();
+            }
+
+            if ($action === 'supprimer') {
+                $sujet = $eec->recupererSujetParId($filiere, $id);
+                if ($sujet) {
+                    foreach ($examens as $colonne) {
+                        if (!empty($sujet->$colonne)) {
+                            $chemin = ASSETS_ROOT . "uploads/docpdf/" . $sujet->$colonne;
+                            if (is_file($chemin)) {
+                                @unlink($chemin);
+                            }
+                        }
+                    }
+                    $eec->supprimerSujetComplet($filiere, $id);
+                    ?>
+                    <script>
+                        alert("Sujet PDF supprimé avec succès.");
+                    </script>
+                    <?php
+                } else {
+                    ?>
+                    <script>
+                        alert("Sujet introuvable.");
+                    </script>
+                    <?php
+                }
+                header("Refresh: 0; url=" . HOST . "sujetspdf");
+                exit();
+            }
+
+            if ($action === 'modifier') {
+                $matiere = trim($_POST['matiere'] ?? '');
+                $annee = trim($_POST['annee'] ?? '');
+
+                if ($matiere === '') {
+                    ?>
+                    <script>
+                        alert("Le champ matière est obligatoire.");
+                    </script>
+                    <?php
+                    header("Refresh: 0; url=" . HOST . "sujetspdf");
+                    exit();
+                }
+
+                $sujetExistant = $eec->recupererSujetParId($filiere, $id);
+                if (!$sujetExistant) {
+                    ?>
+                    <script>
+                        alert("Sujet introuvable.");
+                    </script>
+                    <?php
+                    header("Refresh: 0; url=" . HOST . "sujetspdf");
+                    exit();
+                }
+
+                $valeursPdf = [
+                    'cc' => $sujetExistant->cc,
+                    'sn' => $sujetExistant->sn,
+                    'sr' => $sujetExistant->sr,
+                    'bts' => $sujetExistant->bts,
+                    'td' => $sujetExistant->td,
+                    'tp' => $sujetExistant->tp,
+                ];
+
+                foreach ($examens as $colonne) {
+                    if (isset($_FILES[$colonne]) && !empty($_FILES[$colonne]['name'])) {
+                        $extension = strtolower(strrchr($_FILES[$colonne]['name'], "."));
+                        if ($extension !== '.pdf') {
+                            ?>
+                            <script>
+                                alert("Seuls les fichiers PDF sont autorisés pour <?= strtoupper($colonne); ?>.");
+                            </script>
+                            <?php
+                            header("Refresh: 0; url=" . HOST . "sujetspdf");
+                            exit();
+                        }
+
+                        $nouveauNom = basename($_FILES[$colonne]['name']);
+                        $destination = ASSETS_ROOT . "uploads/docpdf/" . $nouveauNom;
+
+                        if (!empty($sujetExistant->$colonne)) {
+                            $ancienChemin = ASSETS_ROOT . "uploads/docpdf/" . $sujetExistant->$colonne;
+                            if (is_file($ancienChemin)) {
+                                @unlink($ancienChemin);
+                            }
+                        }
+
+                        move_uploaded_file($_FILES[$colonne]['tmp_name'], $destination);
+                        $valeursPdf[$colonne] = $nouveauNom;
+                    }
+                }
+
+                $anneeValeur = $annee !== '' ? (int)$annee : null;
+                $eec->updateSujetPdf(
+                    $filiere,
+                    $id,
+                    $matiere,
+                    $anneeValeur,
+                    $valeursPdf['cc'],
+                    $valeursPdf['sn'],
+                    $valeursPdf['sr'],
+                    $valeursPdf['bts'],
+                    $valeursPdf['td'],
+                    $valeursPdf['tp']
+                );
+                ?>
+                <script>
+                    alert("Sujet PDF modifié avec succès.");
+                </script>
+                <?php
+                header("Refresh: 0; url=" . HOST . "sujetspdf");
+                exit();
+            }
+        }
+
+        $allSujets = [];
+        foreach ($filieres as $cle => $libelle) {
+            $sujets = $eec->afficherSujet($cle);
+            if (!empty($sujets)) {
+                foreach ($sujets as $sujet) {
+                    $sujet->filiere = $cle;
+                    $sujet->libelle_filiere = $libelle;
+                    $allSujets[] = $sujet;
+                }
+            }
+        }
+
+        include(DOC_ADMINISTRATEUR . "sujetspdf.php");
         ExercicesEtCorrections::cacheLesMenusReserverAdmin();
     }
 

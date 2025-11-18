@@ -157,6 +157,105 @@ class ExercicesEtCorrections
                 $donnees = $req_affiche->fetchAll(PDO::FETCH_OBJ);
                 return $donnees;
             }
+
+            public function recupererSujetParId($filiere, $id)
+            {
+                if (!$this->estFiliereValide($filiere)) {
+                    return null;
+                }
+
+                $sql = "SELECT * FROM `$filiere` WHERE id = :id LIMIT 1";
+                $stmt = $this->connexionBd->prepare($sql);
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                $stmt->execute();
+                return $stmt->fetch(PDO::FETCH_OBJ);
+            }
+
+            public function getSujetPdfPath($filiere, $id, $examenType)
+            {
+                if (!$this->estFiliereValide($filiere) || !$this->estExamenValide($examenType)) {
+                    return null;
+                }
+
+                $sql = "SELECT `$examenType` FROM `$filiere` WHERE id = :id";
+                $stmt = $this->connexionBd->prepare($sql);
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                $stmt->execute();
+                $resultat = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                return $resultat ? $resultat[$examenType] : null;
+            }
+
+            public function supprimerSujetPdf($filiere, $id, $examenType)
+            {
+                if (!$this->estFiliereValide($filiere) || !$this->estExamenValide($examenType)) {
+                    return false;
+                }
+
+                $sql = "UPDATE `$filiere` SET `$examenType` = NULL WHERE id = :id";
+                $stmt = $this->connexionBd->prepare($sql);
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                return $stmt->execute();
+            }
+
+            public function updateSujetPdf($filiere, $id, $matiere, $annee, $cc, $sn, $sr, $bts, $td, $tp)
+            {
+                if (!$this->estFiliereValide($filiere)) {
+                    return false;
+                }
+
+                $sql = "UPDATE `$filiere`
+                        SET matiere = :matiere,
+                            annee = :annee,
+                            cc = :cc,
+                            sn = :sn,
+                            sr = :sr,
+                            bts = :bts,
+                            td = :td,
+                            tp = :tp
+                        WHERE id = :id";
+
+                $stmt = $this->connexionBd->prepare($sql);
+                $stmt->bindParam(':matiere', $matiere, PDO::PARAM_STR);
+                if (!empty($annee)) {
+                    $stmt->bindValue(':annee', $annee, PDO::PARAM_INT);
+                } else {
+                    $stmt->bindValue(':annee', null, PDO::PARAM_NULL);
+                }
+
+                $colonnes = [
+                    ':cc' => $cc,
+                    ':sn' => $sn,
+                    ':sr' => $sr,
+                    ':bts' => $bts,
+                    ':td' => $td,
+                    ':tp' => $tp,
+                ];
+
+                foreach ($colonnes as $param => $valeur) {
+                    if ($valeur === null || $valeur === '') {
+                        $stmt->bindValue($param, null, PDO::PARAM_NULL);
+                    } else {
+                        $stmt->bindValue($param, $valeur, PDO::PARAM_STR);
+                    }
+                }
+
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+                return $stmt->execute();
+            }
+
+            public function supprimerSujetComplet($filiere, $id)
+            {
+                if (!$this->estFiliereValide($filiere)) {
+                    return false;
+                }
+
+                $sql = "DELETE FROM `$filiere` WHERE id = :id";
+                $stmt = $this->connexionBd->prepare($sql);
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                return $stmt->execute();
+            }
                 public function ligneFichierPDF($examen, $filiere, $id_pdf)
                 {
                     // Liste des colonnes d'examen valides pour éviter les injections SQL
@@ -242,6 +341,18 @@ class ExercicesEtCorrections
         $req_supprimer = $this->connexionBd->prepare("DELETE FROM matieres_utilisateurs WHERE id_mat_uti = :id ");
         $req_supprimer->bindParam(':id', $id, PDO::PARAM_INT);
         $req_supprimer->execute(); 
+    }
+
+    private function estFiliereValide($filiere)
+    {
+        $filieresValides = ['gi', 'mcd', 'cf', 'lt', 'edd', 'grh', 'dcj', 'scienceid'];
+        return in_array($filiere, $filieresValides, true);
+    }
+
+    private function estExamenValide($examen)
+    {
+        $examensValides = ['cc', 'sn', 'sr', 'bts', 'td', 'tp'];
+        return in_array($examen, $examensValides, true);
     }
 
     public static function req_selectionContenuTable($nomTable)

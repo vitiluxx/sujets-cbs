@@ -114,11 +114,11 @@
             language: {
                 url: "https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/French.json" // Traduction en français
             },
-            paging: true,
+            paging: true, //la pagination
             autoWidth: false,
             responsive: false,
             info: false,
-            ordering: false,
+            ordering: false, // le tri
 
         });
     });
