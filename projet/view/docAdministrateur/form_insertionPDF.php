@@ -40,7 +40,7 @@
 
         <div class="div-form_champs_labelInput" required>
             <label for="annee">Annee de composition: </label>
-            <input type="number" name="annee" id=""><br>
+            <input type="texte" name="annee" id=""><br>
         </div>
 
         <div class="div-form_champs_labelInput">

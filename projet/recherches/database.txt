@@ -147,7 +147,7 @@ DROP TABLE IF EXISTS gi;
 CREATE TABLE gi (
     id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
     matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
-    annee YEAR COMMENT 'Année du sujet',
+    annee VARCHAR(15) COMMENT 'Intervalle d'années des sujets',
     cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
     sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
     sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
@@ -168,7 +168,7 @@ DROP TABLE IF EXISTS scienceid;
 CREATE TABLE scienceid (
     id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
     matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
-    annee YEAR COMMENT 'Année du sujet',
+    annee VARCHAR(15) COMMENT 'Intervalle d'années des sujets',
     cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
     sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
     sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
@@ -189,7 +189,7 @@ DROP TABLE IF EXISTS dcj;
 CREATE TABLE dcj (
     id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
     matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
-    annee YEAR COMMENT 'Année du sujet',
+    annee VARCHAR(15) COMMENT 'Intervalle d'années des sujets',
     cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
     sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
     sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
@@ -210,7 +210,7 @@ DROP TABLE IF EXISTS edd;
 CREATE TABLE edd (
     id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
     matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
-    annee YEAR COMMENT 'Année du sujet',
+    annee VARCHAR(15) COMMENT 'Intervalle d'années des sujets',
     cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
     sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
     sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
@@ -231,7 +231,7 @@ DROP TABLE IF EXISTS lt;
 CREATE TABLE lt (
     id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
     matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
-    annee YEAR COMMENT 'Année du sujet',
+    annee VARCHAR(15) COMMENT 'Intervalle d'années des sujets',
     cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
     sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
     sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
@@ -252,7 +252,7 @@ DROP TABLE IF EXISTS mcd;
 CREATE TABLE mcd (
     id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
     matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
-    annee YEAR COMMENT 'Année du sujet',
+    annee VARCHAR(15) COMMENT 'Intervalle d'années des sujets',
     cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
     sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
     sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
@@ -273,7 +273,7 @@ DROP TABLE IF EXISTS cf;
 CREATE TABLE cf (
     id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
     matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
-    annee YEAR COMMENT 'Année du sujet',
+    annee VARCHAR(15) COMMENT 'Intervalle d'années des sujets',
     cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
     sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
     sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
@@ -294,7 +294,7 @@ DROP TABLE IF EXISTS grh;
 CREATE TABLE grh (
     id INT AUTO_INCREMENT NOT NULL COMMENT 'Identifiant unique du sujet',
     matiere VARCHAR(50) NOT NULL COMMENT 'Nom de la matière',
-    annee YEAR COMMENT 'Année du sujet',
+    annee VARCHAR(15) COMMENT 'Intervalle d'années des sujets',
     cc VARCHAR(150) COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
     sn VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
     sr VARCHAR(150) COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
