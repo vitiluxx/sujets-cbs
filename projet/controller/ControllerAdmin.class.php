@@ -102,7 +102,7 @@ class ControllerAdmin
                     </script>
                     <?php
 
-                    header("Location: " . HOST . "demandesInscription");
+                    header("Location: " . HOST . "demandesinscription");
                     exit();
                 } catch (PDOException $e) {
                     // Annuler la transaction en cas d'erreur
@@ -115,7 +115,7 @@ class ControllerAdmin
                     </script>
                     <?php
 
-                    header("Location: " . HOST . "demandesInscription");
+                    header("Location: " . HOST . "demandesinscription");
                     exit();
                 }
             } else {
@@ -124,7 +124,7 @@ class ControllerAdmin
                     alert("Données invalides.");
                 </script>
                 <?php
-                header("Location: " . HOST . "demandesInscription");
+                header("Location: " . HOST . "demandesinscription");
                 exit();
             }
         }
@@ -144,7 +144,7 @@ class ControllerAdmin
                         alert("Demande supprimée avec succès");
                     </script>
                     <?php
-                    header("Location: " . HOST . "demandesInscription");
+                    header("Location: " . HOST . "demandesinscription");
                     exit();
                 } catch (PDOException $e)
                 {
@@ -153,7 +153,7 @@ class ControllerAdmin
                         alert("Erreur de base de données : " . $e->getMessage(););
                     </script>
                     <?php
-                    header("Location: " . HOST . "demandesInscription");
+                    header("Location: " . HOST . "demandesinscription");
                     exit();
                 }
             } else {
@@ -162,7 +162,7 @@ class ControllerAdmin
                         alert("Données invalides.");
                     </script>
                 <?php
-                header("Location: " . HOST . "demandesInscription");
+                header("Location: " . HOST . "demandesinscription");
                 exit();
             }
         }

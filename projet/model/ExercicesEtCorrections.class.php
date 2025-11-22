@@ -18,7 +18,7 @@ class ExercicesEtCorrections
     {
         $req_inserer = $this->connexionBd->prepare("INSERT INTO $filiere (matiere, annee, cc, sn, sr, td, tp) VALUES (:matiere, :annee, :cc, :sn, :sr, :td, :tp)");
         $req_inserer->bindParam(':matiere', $matiere, PDO::PARAM_STR);
-        $req_inserer->bindParam(':annee', $annee, PDO::PARAM_INT);
+        $req_inserer->bindParam(':annee', $annee, PDO::PARAM_STR);
         $req_inserer->bindParam(':cc', $cc, PDO::PARAM_STR);
         $req_inserer->bindParam(':sn', $sn, PDO::PARAM_STR);
         $req_inserer->bindParam(':sr', $sr, PDO::PARAM_STR);
