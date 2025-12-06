@@ -43,6 +43,16 @@
             <input type="texte" name="annee" id=""><br>
         </div>
 
+        <div class="div-form_champs_labelInput" required>
+            <label for="niveau">Niveau: </label>
+            <select name="niveau" id="niveau">
+                <option value="">Sélectionner un niveau</option>
+                <option value="1">Licence 1</option>
+                <option value="2">Licence 2</option>
+                <option value="3">Licence 3</option>
+            </select><br>
+        </div>
+
         <div class="div-form_champs_labelInput">
             <label for="cc">Importer le PDF du CC </label>
             <input type="file" name="cc" id="cc"><br>  

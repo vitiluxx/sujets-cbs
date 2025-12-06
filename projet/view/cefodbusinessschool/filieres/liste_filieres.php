@@ -10,43 +10,43 @@
 
         <div class="div-contenu_corpsPageListe_filieres">
             <section class="section-filiere">
-                <a href="<?= HOST.$sujet; ?>.php?filiere=gi&examen=<?=$sujet;?>">
+                <a href="<?= HOST; ?>liste_niveaux?filiere=gi&examen=<?=$sujet;?>">
                     <p>Génie Informatique</p>
                 </a>
             </section>
             <section class="section-filiere">
-            <a href="<?= HOST.$sujet; ?>.php?filiere=mcd&examen=<?=$sujet;?>">
+            <a href="<?= HOST; ?>liste_niveaux?filiere=mcd&examen=<?=$sujet;?>">
                     <p>Marketing et Communication Digitale</p>
                 </a>
             </section>
             <section class="section-filiere">
-            <a href="<?= HOST.$sujet; ?>.php?filiere=cf&examen=<?=$sujet;?>">
+            <a href="<?= HOST; ?>liste_niveaux?filiere=cf&examen=<?=$sujet;?>">
                     <p>Comptabilite Finance</p>
                 </a>
             </section>
             <section class="section-filiere">
-            <a href="<?= HOST.$sujet; ?>.php?filiere=lt&examen=<?=$sujet;?>">
+            <a href="<?= HOST; ?>liste_niveaux?filiere=lt&examen=<?=$sujet;?>">
                     <p>Logistique Transport</p>
                 </a>
             </section>
             <section class="section-filiere">
-            <a href="<?= HOST.$sujet; ?>.php?filiere=edd&examen=<?=$sujet;?>">
+            <a href="<?= HOST; ?>liste_niveaux?filiere=edd&examen=<?=$sujet;?>">
                     <p>Economie et Developpement Durable</p>
                 </a>
             </section>
             <section class="section-filiere">
-            <a href="<?= HOST.$sujet; ?>.php?filiere=grh&examen=<?=$sujet;?>">
+            <a href="<?= HOST; ?>liste_niveaux?filiere=grh&examen=<?=$sujet;?>">
                     <p>Gestion des Ressources Humaines</p>
                 </a>
             </section>
             <section class="section-filiere">
-            <a href="<?= HOST.$sujet; ?>.php?filiere=dcj&examen=<?=$sujet;?>">
+            <a href="<?= HOST; ?>liste_niveaux?filiere=dcj&examen=<?=$sujet;?>">
                     <p>Droit et Carriere Judiciaire</p>
                 </a>
             </section>
             <section class="section-filiere">
-            <a href="<?= HOST.$sujet; ?>.php?filiere=scienceid&examen=<?=$sujet;?>">
-                    <p>Science de l\'Information Documentaire</p>
+            <a href="<?= HOST; ?>liste_niveaux?filiere=scienceid&examen=<?=$sujet;?>">
+                    <p>Science de l'Information Documentaire</p>
                 </a>
             </section>
         </div>

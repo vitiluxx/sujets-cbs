@@ -243,7 +243,6 @@ class ControllerAdmin
         }
       
         include(DOC_ADMINISTRATEUR."zoneAdmin.php");
-        ExercicesEtCorrections::cacheLesMenusReserverAdmin();
     }
 
 /*============================================================================================================================ */
@@ -314,11 +313,23 @@ class ControllerAdmin
             if ($action === 'modifier') {
                 $matiere = trim($_POST['matiere'] ?? '');
                 $annee = trim($_POST['annee'] ?? '');
+                $niveau = isset($_POST['niveau']) && !empty($_POST['niveau']) ? (int)$_POST['niveau'] : null;
 
                 if ($matiere === '') {
                     ?>
                     <script>
                         alert("Le champ matière est obligatoire.");
+                    </script>
+                    <?php
+                    header("Refresh: 0; url=" . HOST . "sujetspdf");
+                    exit();
+                }
+
+                // Validation du niveau
+                if ($niveau !== null && ($niveau < 1 || $niveau > 3)) {
+                    ?>
+                    <script>
+                        alert("Le niveau doit être entre 1 et 3.");
                     </script>
                     <?php
                     header("Refresh: 0; url=" . HOST . "sujetspdf");
@@ -379,6 +390,7 @@ class ControllerAdmin
                     $id,
                     $matiere,
                     $anneeValeur,
+                    $niveau,
                     $valeursPdf['cc'],
                     $valeursPdf['sn'],
                     $valeursPdf['sr'],
@@ -409,7 +421,6 @@ class ControllerAdmin
         }
 
         include(DOC_ADMINISTRATEUR . "sujetspdf.php");
-        ExercicesEtCorrections::cacheLesMenusReserverAdmin();
     }
 
 /*============================================================================================================================ */
@@ -428,6 +439,18 @@ class ControllerAdmin
                 $filiere = $_POST["filiere"];
                 $matiere = $_POST["matiere"];
                 $annee = $_POST["annee"];
+                $niveau = isset($_POST["niveau"]) && !empty($_POST["niveau"]) ? (int) $_POST["niveau"] : null;
+        
+                // Validation du niveau
+                if ($niveau !== null && ($niveau < 1 || $niveau > 3)) {
+                    ?>
+                    <script>
+                        alert("Le niveau doit être entre 1 et 3.");
+                    </script>
+                    <?php
+                    include(DOC_ADMINISTRATEUR ."form_insertionPDF.php");
+                    return;
+                }
         
                 // Tableau pour stocker les fichiers valides
                 $fichiersValides = [];
@@ -477,7 +500,7 @@ class ControllerAdmin
                     $tp = $fichiersValides["tp"]["nom"] ?? null;
         
                     // Insertion dans la base de données
-                    $req_insertion = $eec->insererSujet($filiere, $matiere, $annee, $cc, $sn, $sr, $td, $tp);
+                    $req_insertion = $eec->insererSujet($filiere, $matiere, $annee, $niveau, $cc, $sn, $sr, $td, $tp);
         
                     if ($req_insertion) {
                         // Déplacement des fichiers vers le dossier de destination
@@ -507,7 +530,6 @@ class ControllerAdmin
         }
 
         include(DOC_ADMINISTRATEUR ."form_insertionPDF.php");
-        ExercicesEtCorrections::cacheLesMenusReserverAdmin();
     }
 
 /*============================================================================================================================ */
@@ -533,7 +555,6 @@ public function affichePageForm_publierEEC()
         $eec->insererCorrectionsUtilisateurs($titre_cor_uti, $libelle_cor_uti, $date_pub_uti, $heure_pub_uti, $lastInsertId_exe_uti);
     }
     include(VIEW_ROOT."form_publierEEC.php");
-    ExercicesEtCorrections::cacheLesMenusReserverAdmin();
 }
 
 

@@ -91,6 +91,7 @@ CREATE TABLE cf (
   id int(11) NOT NULL COMMENT 'Identifiant unique du sujet',
   matiere varchar(50) NOT NULL COMMENT 'Nom de la matière',
   annee VARCHAR(15) COMMENT 'Intervalle années des sujets',
+  niveau int(1) NOT NULL COMMENT 'Le niveau de la licence',
   cc varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
   sn varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
   sr varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
@@ -109,6 +110,7 @@ CREATE TABLE dcj (
   id int(11) NOT NULL COMMENT 'Identifiant unique du sujet',
   matiere varchar(50) NOT NULL COMMENT 'Nom de la matière',
   annee VARCHAR(15) COMMENT 'Intervalle années des sujets',
+  niveau int(1) NOT NULL COMMENT 'Le niveau de la licence',
   cc varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
   sn varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
   sr varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
@@ -127,6 +129,7 @@ CREATE TABLE edd (
   id int(11) NOT NULL COMMENT 'Identifiant unique du sujet',
   matiere varchar(50) NOT NULL COMMENT 'Nom de la matière',
   annee VARCHAR(15) COMMENT 'Intervalle années des sujets',
+  niveau int(1) NOT NULL COMMENT 'Le niveau de la licence',
   cc varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
   sn varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
   sr varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
@@ -182,6 +185,7 @@ CREATE TABLE gi (
   id int(11) NOT NULL COMMENT 'Identifiant unique du sujet',
   matiere varchar(50) NOT NULL COMMENT 'Nom de la matière',
   annee VARCHAR(15) COMMENT 'Intervalle années des sujets',
+  niveau int(1) NOT NULL COMMENT 'Le niveau de la licence',
   cc varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
   sn varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
   sr varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
@@ -200,6 +204,7 @@ CREATE TABLE grh (
   id int(11) NOT NULL COMMENT 'Identifiant unique du sujet',
   matiere varchar(50) NOT NULL COMMENT 'Nom de la matière',
   annee VARCHAR(15) COMMENT 'Intervalle années des sujets',
+  niveau int(1) NOT NULL COMMENT 'Le niveau de la licence',
   cc varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
   sn varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
   sr varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
@@ -218,6 +223,7 @@ CREATE TABLE lt (
   id int(11) NOT NULL COMMENT 'Identifiant unique du sujet',
   matiere varchar(50) NOT NULL COMMENT 'Nom de la matière',
   annee VARCHAR(15) COMMENT 'Intervalle années des sujets',
+  niveau int(1) NOT NULL COMMENT 'Le niveau de la licence',
   cc varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
   sn varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
   sr varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
@@ -226,31 +232,6 @@ CREATE TABLE lt (
   tp varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF TP (Travaux Pratiques)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des sujets PDF pour la filière Lettres et Traduction';
 
--- --------------------------------------------------------
-
---
--- Structure de la table matieres
---
-
-CREATE TABLE matieres (
-  id_mat int(11) NOT NULL COMMENT 'Identifiant unique de la matière',
-  nom_mat varchar(255) NOT NULL COMMENT 'Nom de la matière',
-  date_creation_mat timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'Date de création de la matière',
-  date_modification_mat timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Date de dernière modification'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des matières pour exercices admin';
-
--- --------------------------------------------------------
-
---
--- Structure de la table matieres_utilisateurs
---
-
-CREATE TABLE matieres_utilisateurs (
-  id_mat_uti int(11) NOT NULL COMMENT 'Identifiant unique de la matière utilisateur',
-  nom_mat_uti varchar(255) NOT NULL COMMENT 'Nom de la matière utilisateur',
-  date_creation_mat_uti timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'Date de création de la matière',
-  date_modification_mat_uti timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Date de dernière modification'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des matières pour exercices utilisateurs';
 
 -- --------------------------------------------------------
 
@@ -262,6 +243,7 @@ CREATE TABLE mcd (
   id int(11) NOT NULL COMMENT 'Identifiant unique du sujet',
   matiere varchar(50) NOT NULL COMMENT 'Nom de la matière',
   annee VARCHAR(15) COMMENT 'Intervalle années des sujets',
+  niveau int(1) NOT NULL COMMENT 'Le niveau de la licence',
   cc varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
   sn varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
   sr varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
@@ -280,6 +262,7 @@ CREATE TABLE scienceid (
   id int(11) NOT NULL COMMENT 'Identifiant unique du sujet',
   matiere varchar(50) NOT NULL COMMENT 'Nom de la matière',
   annee VARCHAR(15) COMMENT 'Intervalle années des sujets',
+  niveau int(1) NOT NULL COMMENT 'Le niveau de la licence',
   cc varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF CC (Contrôle Continu)',
   sn varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SN (Session Normale)',
   sr varchar(150) DEFAULT NULL COMMENT 'Chemin vers le fichier PDF SR (Session de Rattrapage)',
@@ -289,27 +272,6 @@ CREATE TABLE scienceid (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des sujets PDF pour la filière Sciences de l''Information et Documentation';
 
 -- --------------------------------------------------------
-
---
--- Structure de la table utilisateurs
---
-
-CREATE TABLE utilisateurs (
-  id_uti int(11) NOT NULL COMMENT 'Identifiant unique de l''utilisateur',
-  identifiant_etu varchar(100) DEFAULT NULL COMMENT 'Identifiant de l''étudiant (pour CBS)',
-  prenom_etu varchar(100) DEFAULT NULL COMMENT 'Prénom de l''étudiant',
-  nom_complet varchar(255) DEFAULT NULL COMMENT 'Nom complet de l''utilisateur',
-  email_uti varchar(255) NOT NULL COMMENT 'Email de l''utilisateur',
-  mdp_uti varchar(255) NOT NULL COMMENT 'Mot de passe hashé de l''utilisateur',
-  confirmation_mdp_uti varchar(255) DEFAULT NULL COMMENT 'Token de confirmation du mot de passe',
-  confirmation_compte_uti timestamp NULL DEFAULT NULL COMMENT 'Date de confirmation du compte (NULL si non confirmé)',
-  reset_token varchar(255) DEFAULT NULL COMMENT 'Token pour réinitialisation du mot de passe',
-  reset_at timestamp NULL DEFAULT NULL COMMENT 'Date de demande de réinitialisation',
-  connexion_auto varchar(255) DEFAULT NULL COMMENT 'Token pour connexion automatique',
-  image_uti varchar(500) DEFAULT NULL COMMENT 'Chemin vers l''image de profil',
-  date_creation_uti timestamp NOT NULL DEFAULT current_timestamp() COMMENT 'Date de création du compte',
-  date_modification_uti timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Date de dernière modification'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Table des utilisateurs';
 
 --
 -- Index pour les tables déchargées
@@ -385,18 +347,6 @@ ALTER TABLE lt
   ADD KEY idx_lt_annee (annee);
 
 --
--- Index pour la table matieres
---
-ALTER TABLE matieres
-  ADD PRIMARY KEY (id_mat);
-
---
--- Index pour la table matieres_utilisateurs
---
-ALTER TABLE matieres_utilisateurs
-  ADD PRIMARY KEY (id_mat_uti);
-
---
 -- Index pour la table mcd
 --
 ALTER TABLE mcd
@@ -411,14 +361,6 @@ ALTER TABLE scienceid
   ADD PRIMARY KEY (id),
   ADD KEY idx_scienceid_matiere (matiere),
   ADD KEY idx_scienceid_annee (annee);
-
---
--- Index pour la table utilisateurs
---
-ALTER TABLE utilisateurs
-  ADD PRIMARY KEY (id_uti),
-  ADD UNIQUE KEY email_uti (email_uti),
-  ADD UNIQUE KEY identifiant_etu (identifiant_etu);
 
 --
 -- AUTO_INCREMENT pour les tables déchargées
@@ -479,18 +421,6 @@ ALTER TABLE lt
   MODIFY id int(11) NOT NULL AUTO_INCREMENT COMMENT 'Identifiant unique du sujet';
 
 --
--- AUTO_INCREMENT pour la table matieres
---
-ALTER TABLE matieres
-  MODIFY id_mat int(11) NOT NULL AUTO_INCREMENT COMMENT 'Identifiant unique de la matière';
-
---
--- AUTO_INCREMENT pour la table matieres_utilisateurs
---
-ALTER TABLE matieres_utilisateurs
-  MODIFY id_mat_uti int(11) NOT NULL AUTO_INCREMENT COMMENT 'Identifiant unique de la matière utilisateur';
-
---
 -- AUTO_INCREMENT pour la table mcd
 --
 ALTER TABLE mcd
@@ -502,12 +432,6 @@ ALTER TABLE mcd
 ALTER TABLE scienceid
   MODIFY id int(11) NOT NULL AUTO_INCREMENT COMMENT 'Identifiant unique du sujet';
 
---
--- AUTO_INCREMENT pour la table utilisateurs
---
-ALTER TABLE utilisateurs
-  MODIFY id_uti int(11) NOT NULL AUTO_INCREMENT COMMENT 'Identifiant unique de l''utilisateur';
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -12,13 +12,13 @@
     {
         $filiere = (string) $_GET["filiere"];
         $liste_filieres = [
-            'Genie Informatique' => 'gi',
+            'Génie Informatique' => 'gi',
             'Marketing et Communication Digitale' => 'mcd',
-            'Comptabilite Finance' => 'cf',
+            'Comptabilité Finance' => 'cf',
             'Logistique Transport' => 'lt',
-            'Economie et Developpement Durable' => 'edd',
+            'ÉCONOMIE ET Développement Durable' => 'edd',
             'Gestion des Ressources Humaines' => 'grh',
-            'Droit et Carriere Judiciaire' => 'dcj',
+            'Droit et Carrière Judiciaire' => 'dcj',
             'Science de l\'Information Documentaire' => 'scienceid'
         ];
 
@@ -27,14 +27,15 @@
         if ($filiere_key !== false)
         {
             $examen = (string) $_GET["examen"];
-            $table = $eec->afficherSujetExamen($examen,$filiere);
+            $niveau = (int) $_GET["niveau"];
+            $table = $eec->afficherSujetExamen($examen,$filiere,$niveau);
                 
                 if (!empty($table)):
                 ?>
                 <?php foreach($liste_filieres as $key => $valeur) : 
                     if($valeur === $filiere)
                     {
-                        echo '<h1 style="font-weight: bold;">'.$key.'</h1>';
+                        echo '<h1 style="font-weight: bold;">'.$key.' '.$niveau.'</h1>';
                     }      
                 endforeach; ?>
                 <section class="section-sujets">

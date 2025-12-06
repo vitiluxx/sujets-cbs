@@ -13,8 +13,16 @@ class Controller
 {
         /*============================================================================================================================ */    
                              
+        // DÉSACTIVÉE - La table utilisateurs n'existe plus
+        // Cette méthode était utilisée pour l'inscription des utilisateurs normaux
+        // Les étudiants CBS utilisent maintenant affichePageForm_inscriptionEtudiantCbs()
         public function affichePageForm_inscriptionUtilisateur()
         {
+            // Redirection vers la page d'inscription CBS car la table utilisateurs n'existe plus
+            header("Location: " . HOST . "form_inscriptionCbs");
+            exit();
+            
+            /* CODE DÉSACTIVÉ - Table utilisateurs supprimée
             require("connexionBd.php");
             require(MODEL_ROOT."ExercicesEtCorrections.class.php");
 
@@ -132,8 +140,7 @@ class Controller
             }
             }
             include(VIEW_ROOT."form_inscriptionUtilisateur.php");
-            ExercicesEtCorrections::cacheLesMenusReserverAdmin();                                
-
+            */
         }
 
         /*============================================================================================================================ */                            
@@ -141,42 +148,13 @@ class Controller
 
         /*============================================================================================================================ */                            
 
+        // DÉSACTIVÉE - La table utilisateurs n'existe plus
+        // Cette méthode était utilisée pour confirmer les comptes utilisateurs
         public function affichePageConfirmation()
         {   
-            session_start();
-            require("connexionBd.php");
-            $userId = $_GET['id'];
-            $token = $_GET['token'];
-
-            try {
-                $query = "SELECT * FROM utilisateurs WHERE id_uti = ?";
-                $req = $connexionBd->prepare($query);
-                $req->execute([$userId]);
-                $user = $req->fetch();
-                // var_dump($user);
-                // die();
-
-                if ($user && $token == $user['confirmation_mdp_uti'] ) {
-                    // die('ok');
-                    
-                    $query = "UPDATE utilisateurs SET confirmation_mdp_uti = NULL, confirmation_compte_uti = NOW() WHERE id_uti = ?";
-                    $req = $connexionBd->prepare($query);
-                    $req->execute([$userId]);
-                    $_SESSION['flash']['success'] = "Votre compte a bien été validé";
-                    $_SESSION['auth'] = $user;
-                    
-                    header("Location: " . HOST . "form_publierEEC.php");
-                } else {
-
-                    // die('pas ok');
-                    $_SESSION['flash']['danger'] = "Ce compte n'existe pas";
-                    header("Location: " . HOST . "form_inscriptionUtilisateur.php");
-                }
-            } catch (PDOException $e) {
-                // Gérer les erreurs de base de données ici
-                echo "Erreur de base de données : " . $e->getMessage();
-            }
-            
+            // Redirection car la table utilisateurs n'existe plus
+            header("Location: " . HOST . "form_connexionUtilisateur.php");
+            exit();
         }
 
 /*============================================================================================================================ */                            
@@ -198,14 +176,11 @@ public function affichePageForm_connexionUtilisateur()
                 $error = "L'email et le mot de passe sont requis.";
             } else {
                 $admin = $this->getAdminByEmail($connexionBd, $email);
-                $utilisateur = $this->getUtilisateurByEmail($connexionBd, $email);
 
                 if ($admin && $email === $admin->email_adm) {
                     $this->connecterAdmin($connexionBd, $email, $mdp); // redirige si OK
-                } elseif ($utilisateur && $email === $utilisateur->email_uti) {
-                    $this->connecterUtilisateur($connexionBd, $email, $mdp); // redirige si OK
                 } else {
-                    $error = "Identifiants incorrects ou utilisateur non trouvé.";
+                    $error = "Identifiants incorrects ou administrateur non trouvé.";
                 }
             }
         }
@@ -216,22 +191,12 @@ public function affichePageForm_connexionUtilisateur()
 
     // ✅ Affichage du formulaire avec erreur potentielle
     include(VIEW_ROOT . "form_connexionUtilisateur.php");
-    ExercicesEtCorrections::cacheLesMenusReserverAdmin();
 }
 
 
 // Méthode pour récupérer un admin par email
 private function getAdminByEmail($connexionBd, $email) {
     $query = "SELECT * FROM admin WHERE email_adm = :email";
-    $req = $connexionBd->prepare($query);
-    $req->bindParam(":email", $email, PDO::PARAM_STR);
-    $req->execute();
-    return $req->fetch(PDO::FETCH_OBJ) ?: null; // Retourne null si aucun résultat
-}
-
-// Méthode pour récupérer un utilisateur par email
-private function getUtilisateurByEmail($connexionBd, $email) {
-    $query = "SELECT * FROM utilisateurs WHERE email_uti = :email AND confirmation_compte_uti IS NOT NULL";
     $req = $connexionBd->prepare($query);
     $req->bindParam(":email", $email, PDO::PARAM_STR);
     $req->execute();
@@ -251,39 +216,6 @@ private function connecterAdmin($connexionBd, $email, $mdp) {
         exit();
     } else {
         throw new Exception("Identifiant ou mot de passe Admin incorrect.");
-    }
-}
-
-// Méthode pour connecter un utilisateur normal
-private function connecterUtilisateur($connexionBd, $email, $mdp) {
-    $user = $this->getUtilisateurByEmail($connexionBd, $email);
-
-    if ($user && password_verify($mdp, $user->mdp_uti)) {
-        $_SESSION['auth'] = $user;
-        $_SESSION['role'] = 'utilisateur';
-        $_SESSION['flash']['success'] = "Connexion effectuée avec succès.";
-
-        // Gestion de la connexion automatique
-        if (isset($_POST['connexion_auto'])) {
-            $connexion_auto = bin2hex(random_bytes(50)); // Token sécurisé
-            $query = "UPDATE utilisateurs SET connexion_auto = :token WHERE id_uti = :id";
-            $connexionBd->prepare($query)->execute([
-                ":token" => $connexion_auto,
-                ":id" => $user->id_uti
-            ]);
-
-            setcookie(
-                "connexion_auto",
-                $user->id_uti . "::" . $connexion_auto . sha1($user->id_uti . "Koumadoum"),
-                time() + 60 * 60 * 24 * 7,
-                "/", "", false, true
-            ); // Secure et HTTPOnly si besoin
-        }
-
-        header("Location: " . HOST . "form_publierEEC.php");
-        exit();
-    } else {
-        throw new Exception("Identifiant ou mot de passe incorrect.");
     }
 }
 
@@ -351,7 +283,6 @@ private function connecterUtilisateur($connexionBd, $email, $mdp) {
                 }
             }
             include(VIEW_ROOT."form_inscriptionUtilisateur.php");
-            ExercicesEtCorrections::cacheLesMenusReserverAdmin();
         }
 
 
@@ -434,7 +365,6 @@ public function affichePageDeconnexionUtilisateur()
             }
             
             include(VIEW_ROOT."form_mdp_oublier.php");
-            ExercicesEtCorrections::cacheLesMenusReserverAdmin();
         }
 
         /*============================================================================================================================ */
@@ -482,7 +412,6 @@ public function affichePageDeconnexionUtilisateur()
             }
             
             include(VIEW_ROOT."reinitialisation_mdp.php");
-            ExercicesEtCorrections::cacheLesMenusReserverAdmin();
         }
 
         /*============================================================================================================================ */
@@ -493,7 +422,6 @@ public function affichePageDeconnexionUtilisateur()
             require(MODEL_ROOT."ExercicesEtCorrections.class.php");
             $eec = new ExercicesEtCorrections($connexionBd);
             include(CEFODBUSINESSSCHOOL_ROOT."cc.php");
-            ExercicesEtCorrections::cacheLesMenusReserverAdmin();
         } 
 
         /*============================================================================================================================ */
@@ -505,7 +433,6 @@ public function affichePageDeconnexionUtilisateur()
             $eec = new ExercicesEtCorrections($connexionBd);
 
             include_once(CEFODBUSINESSSCHOOL_ROOT."sn.php");
-            ExercicesEtCorrections::cacheLesMenusReserverAdmin();
         } 
 
         /*============================================================================================================================ */
@@ -517,7 +444,6 @@ public function affichePageDeconnexionUtilisateur()
             $eec = new ExercicesEtCorrections($connexionBd);
 
             include_once(CEFODBUSINESSSCHOOL_ROOT."sr.php");
-            ExercicesEtCorrections::cacheLesMenusReserverAdmin();
         }
 
         /*============================================================================================================================ */
@@ -528,7 +454,6 @@ public function affichePageDeconnexionUtilisateur()
             $eec = new ExercicesEtCorrections($connexionBd);
 
             include_once(CEFODBUSINESSSCHOOL_ROOT."bts.php");
-            ExercicesEtCorrections::cacheLesMenusReserverAdmin();
         }
 
         /*============================================================================================================================ */
@@ -540,7 +465,6 @@ public function affichePageDeconnexionUtilisateur()
             $eec = new ExercicesEtCorrections($connexionBd);
 
             include_once(CEFODBUSINESSSCHOOL_ROOT."td.php");
-            ExercicesEtCorrections::cacheLesMenusReserverAdmin();
         } 
 
 /*============================================================================================================================ */
@@ -551,7 +475,6 @@ public function affichePageDeconnexionUtilisateur()
             require(MODEL_ROOT."ExercicesEtCorrections.class.php");
             $eec = new ExercicesEtCorrections($connexionBd);
             include_once(CEFODBUSINESSSCHOOL_ROOT."tp.php");
-            ExercicesEtCorrections::cacheLesMenusReserverAdmin();
         }
 
 /*============================================================================================================================ */
@@ -624,7 +547,6 @@ public function affichePageDeconnexionUtilisateur()
             
 
             include(VIEW_ROOT."form_modifierExerciceUtilisateur.php");
-            ExercicesEtCorrections::cacheLesMenusReserverAdmin();    
         } 
 
 /*============================================================================================================================ */    
@@ -713,7 +635,6 @@ public function affichePageDeconnexionUtilisateur()
                     }
 
                     include(DOC_ADMINISTRATEUR."form_admin.php");
-                    ExercicesEtCorrections::cacheLesMenusReserverAdmin();
             }
             
         /*============================================================================================================================ */    
@@ -1088,6 +1009,17 @@ public function affichePageDeconnexionUtilisateur()
                 
                 include_once(CEFODBUSINESSSCHOOL_ROOT."filieres/liste_filieres.php");
             }
+        } 
+        /*============================================================================================================================ */
+        public function affichePageListe_niveaux()
+        {
+            require(MODEL_ROOT."ExercicesEtCorrections.class.php");
+            
+            if(isset($_GET["filiere"]) AND !empty($_GET["filiere"]) AND isset($_GET["examen"]) AND !empty($_GET["examen"]))
+            {
+                $sujet =(string) $_GET["examen"];
+                include_once(CEFODBUSINESSSCHOOL_ROOT."niveaux/liste_niveaux.php");
+            }
         }  
         /*============================================================================================================================ */
         public function affichePageErreur404()
@@ -1125,7 +1057,6 @@ public function affichePageCbs()
     }
 
     include_once(CEFODBUSINESSSCHOOL_ROOT."index.php");
-    ExercicesEtCorrections::cacheLesMenusReserverAdmin();
 }
 
 
@@ -1201,7 +1132,6 @@ public function affichePageForm_inscriptionEtudiantCbs()
 
 
     include(CEFODBUSINESSSCHOOL_ROOT . "form_inscriptionCbs.php");
-    ExercicesEtCorrections::cacheLesMenusReserverAdmin();
 }
 
 /*============================================================================================================================*/
@@ -1256,7 +1186,6 @@ public function affichePageForm_connexionEtudiantCbs()
     }
 
     include(CEFODBUSINESSSCHOOL_ROOT . "form_connexionCbs.php");
-    ExercicesEtCorrections::cacheLesMenusReserverAdmin();
 }
 
 /*============================================================================================================================ */

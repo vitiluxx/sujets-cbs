@@ -14,11 +14,12 @@ class ExercicesEtCorrections
     }
 
     //methode d'insertion des sujets pdf
-    public function insererSujet($filiere, $matiere, $annee, $cc, $sn, $sr, $td, $tp)
+    public function insererSujet($filiere, $matiere, $annee, $niveau, $cc, $sn, $sr, $td, $tp)
     {
-        $req_inserer = $this->connexionBd->prepare("INSERT INTO $filiere (matiere, annee, cc, sn, sr, td, tp) VALUES (:matiere, :annee, :cc, :sn, :sr, :td, :tp)");
+        $req_inserer = $this->connexionBd->prepare("INSERT INTO $filiere (matiere, annee, niveau, cc, sn, sr, td, tp) VALUES (:matiere, :annee, :niveau, :cc, :sn, :sr, :td, :tp)");
         $req_inserer->bindParam(':matiere', $matiere, PDO::PARAM_STR);
         $req_inserer->bindParam(':annee', $annee, PDO::PARAM_STR);
+        $req_inserer->bindParam(':niveau', $niveau, PDO::PARAM_INT);
         $req_inserer->bindParam(':cc', $cc, PDO::PARAM_STR);
         $req_inserer->bindParam(':sn', $sn, PDO::PARAM_STR);
         $req_inserer->bindParam(':sr', $sr, PDO::PARAM_STR);
@@ -36,70 +37,6 @@ class ExercicesEtCorrections
         $req_inserer->execute();
         return $this->connexionBd->lastInsertId();
     }
-    public function insererMatieresUtilisateurs($nom_mat_uti)
-    {
-        $req_inserer = $this->connexionBd->prepare("INSERT INTO matieres_utilisateurs (nom_mat_uti) VALUES (:nom_mat_uti)");
-        $req_inserer->bindParam(':nom_mat_uti',  $nom_mat_uti, PDO::PARAM_STR);
-        $req_inserer->execute();
-        return $this->connexionBd->lastInsertId();
-    }
-
-
-        // Méthode pour insérer une dans la table 'exercices'
-        public function insererExercices($titre_exe, $libelle_exe, $fichier_exe, $date_pub_exe, $heure_pub_exe, $id_mat)
-        {
-            $req_inserer = $this->connexionBd->prepare("INSERT INTO exercices (titre_exe, libelle_exe, fichier_exe, date_pub_exe, heure_pub_exe, id_mat) VALUES (:titre_exe, :libelle_exe, :fichier_exe, CURDATE(), CURTIME(), :id_mat)");
-            $req_inserer->bindParam(':titre_exe', $titre_exe, PDO::PARAM_STR);
-            $req_inserer->bindParam(':libelle_exe',  $libelle_exe, PDO::PARAM_STR);
-            $req_inserer->bindParam(':fichier_exe',  $fichier_exe, PDO::PARAM_STR);
-            $req_inserer->bindParam(':id_mat', $id_mat, PDO::PARAM_INT);
-            $req_inserer->execute();
-            return $this->connexionBd->lastInsertId();
-        }
-        public function insererExercicesUtilisateurs($titre_exe_uti, $libelle_exe_uti, $date_pub_exe_uti, $heure_pub_exe_uti, $id_mat_uti)
-        {
-            $req_inserer = $this->connexionBd->prepare("INSERT INTO exercices_utilisateurs (titre_exe_uti, libelle_exe_uti, date_pub_exe_uti, heure_pub_exe_uti, id_mat_uti) VALUES (:titre_exe_uti, :libelle_exe_uti, CURDATE(), CURTIME(), :id_mat_uti)");
-            $req_inserer->bindParam(':titre_exe_uti', $titre_exe_uti, PDO::PARAM_STR);
-            $req_inserer->bindParam(':libelle_exe_uti',  $libelle_exe_uti, PDO::PARAM_STR);
-            $req_inserer->bindParam(':id_mat_uti', $id_mat_uti, PDO::PARAM_INT);
-            $req_inserer->execute();
-            return $this->connexionBd->lastInsertId();
-        }
-
-
-            // Méthode pour insérer l'utilisateur
-            // public function insererUtilisateurs($nom_uti, $prenom_uti, $mail_uti, $mdp_uti, $confirmation_mdp_uti)
-            // {
-            //     $req_inserer = $this->connexionBd->prepare("INSERT INTO utilisateurs (nom_uti, prenom_uti, email_uti, mdp_uti, confirmation_mdp_uti) VALUES (:nom_uti, :prenom_uti, :mail_uti, :mdp_uti, :confirmation_mdp_uti)");
-            //     $req_inserer->bindParam(':nom_uti', $nom_uti, PDO::PARAM_STR);
-            //     $req_inserer->bindParam(':prenom_uti',  $prenom_uti, PDO::PARAM_STR);
-            //     $req_inserer->bindParam(':mail_uti', $mail_uti, PDO::PARAM_STR);
-            //     $req_inserer->bindParam(':mdp_uti', $mdp_uti, PDO::PARAM_STR);
-            //     $req_inserer->bindParam(':confirmation_mdp_uti', $confirmation_mdp_uti, PDO::PARAM_STR);
-            //     $req_inserer->execute();
-            // }
-
-
-
-            // Méthode pour insérer dans la table 'corrections'
-            public function insererCorrections($titre_cor, $libelle_cor, $fichier_cor, $date_pub_cor, $heure_pub_cor, $id_exe)
-            {
-                $req_inserer = $this->connexionBd->prepare("INSERT INTO corrections (titre_cor, libelle_cor, fichier_cor, date_pub_cor, heure_pub_cor, id_exe) VALUES (:titre_cor, :libelle_cor, :fichier_cor, CURDATE(), CURTIME(), :id_exe)");
-                $req_inserer->bindParam(':titre_cor', $titre_cor, PDO::PARAM_STR);
-                $req_inserer->bindParam(':libelle_cor',  $libelle_cor, PDO::PARAM_STR);
-                $req_inserer->bindParam(':fichier_cor', $fichier_cor, PDO::PARAM_STR);
-                $req_inserer->bindParam(':id_exe', $id_exe, PDO::PARAM_INT);
-                $req_inserer->execute();
-            }
-            public function insererCorrectionsUtilisateurs($titre_cor_uti, $libelle_cor_uti, $date_pub_cor_uti, $heure_pub_cor_uti, $id_exe_uti)
-            {
-                $req_inserer = $this->connexionBd->prepare("INSERT INTO corrections_utilisateurs (titre_cor_uti, libelle_cor_uti, date_pub_cor_uti, heure_pub_cor_uti, id_exe_uti) VALUES (:titre_cor_uti, :libelle_cor_uti, CURDATE(), CURTIME(), :id_exe_uti)");
-                $req_inserer->bindParam(':titre_cor_uti', $titre_cor_uti, PDO::PARAM_STR);
-                $req_inserer->bindParam(':libelle_cor_uti',  $libelle_cor_uti, PDO::PARAM_STR);
-                $req_inserer->bindParam(':id_exe_uti', $id_exe_uti, PDO::PARAM_INT);
-                $req_inserer->execute();
-            }
-
 
 
     /* Methode pour afficher les donnees des tables */
@@ -131,7 +68,7 @@ class ExercicesEtCorrections
                 $donnees = $req_affiche->fetchAll(PDO::FETCH_OBJ);
                 return $donnees;
             }
-            public function afficherSujetExamen($examen, $filiere)
+            public function afficherSujetExamen($examen, $filiere, $niveau = null)
             {
                 // Liste des colonnes d'examen valides pour éviter les injections SQL
                 $examensValides = ['cc', 'sn', 'sr', 'bts', 'td', 'tp'];
@@ -145,12 +82,32 @@ class ExercicesEtCorrections
                     return [];
                 }
                 
+                // Validation du niveau si fourni
+                if ($niveau !== null) {
+                    $niveau = (int) $niveau;
+                    if ($niveau < 1 || $niveau > 3) {
+                        return [];
+                    }
+                }
+                
                 // Sécurisation des noms de colonnes et de table avec des backticks
                 // Filtrer pour ne montrer que les lignes où le champ d'examen n'est pas NULL
-                $sql = "SELECT `id`, `matiere`, `annee`, `$examen` FROM `$filiere` WHERE `$examen` IS NOT NULL AND `$examen` != '' ORDER BY `annee` DESC";
+                $sql = "SELECT `id`, `matiere`, `annee`, `$examen` FROM `$filiere` WHERE `$examen` IS NOT NULL AND `$examen` != ''";
+                
+                // Ajouter le filtre par niveau si fourni
+                if ($niveau !== null) {
+                    $sql .= " AND `niveau` = :niveau";
+                }
+                
+                $sql .= " ORDER BY `annee` DESC";
             
                 // Utilisation d'une requête préparée pour éviter les injections SQL
-                $req_affiche = $this->connexionBd->query($sql);
+                $req_affiche = $this->connexionBd->prepare($sql);
+                
+                if ($niveau !== null) {
+                    $req_affiche->bindParam(':niveau', $niveau, PDO::PARAM_INT);
+                }
+                
                 $req_affiche->execute();
             
                 // Récupération des résultats
@@ -198,7 +155,7 @@ class ExercicesEtCorrections
                 return $stmt->execute();
             }
 
-            public function updateSujetPdf($filiere, $id, $matiere, $annee, $cc, $sn, $sr, $bts, $td, $tp)
+            public function updateSujetPdf($filiere, $id, $matiere, $annee, $niveau, $cc, $sn, $sr, $bts, $td, $tp)
             {
                 if (!$this->estFiliereValide($filiere)) {
                     return false;
@@ -207,6 +164,7 @@ class ExercicesEtCorrections
                 $sql = "UPDATE `$filiere`
                         SET matiere = :matiere,
                             annee = :annee,
+                            niveau = :niveau,
                             cc = :cc,
                             sn = :sn,
                             sr = :sr,
@@ -221,6 +179,18 @@ class ExercicesEtCorrections
                     $stmt->bindValue(':annee', $annee, PDO::PARAM_INT);
                 } else {
                     $stmt->bindValue(':annee', null, PDO::PARAM_NULL);
+                }
+                
+                // Gestion du niveau
+                if ($niveau !== null && $niveau !== '') {
+                    $niveauInt = (int) $niveau;
+                    if ($niveauInt >= 1 && $niveauInt <= 3) {
+                        $stmt->bindValue(':niveau', $niveauInt, PDO::PARAM_INT);
+                    } else {
+                        $stmt->bindValue(':niveau', null, PDO::PARAM_NULL);
+                    }
+                } else {
+                    $stmt->bindValue(':niveau', null, PDO::PARAM_NULL);
                 }
 
                 $colonnes = [
@@ -328,13 +298,6 @@ class ExercicesEtCorrections
         return $details;
     }
 
-    // public function supprimerExcerciceCorrection($id)
-    // {
-    //    $req_supprimer = $this->connexionBd->query("DELETE FROM exercices_utilisateurs, corrections_utilisateurs WHERE id_exe_uti = :id_exe_uti AND id_cor_uti = :id_cor_uti");
-    //    $req_supprimer->bindParam(':id_exe_uti', $id, PDO::PARAM_INT);
-    //    $req_supprimer->bindParam(':id_cor_uti', $id, PDO::PARAM_INT);
-    //    $req_supprimer->execute(); 
-    // }
 
     public function supprimerExcerciceCorrection($id)
     {
@@ -354,69 +317,6 @@ class ExercicesEtCorrections
         $examensValides = ['cc', 'sn', 'sr', 'bts', 'td', 'tp'];
         return in_array($examen, $examensValides, true);
     }
-
-    public static function req_selectionContenuTable($nomTable)
-    {
-        require("connexionBd.php");
-        $query = "SELECT * FROM $nomTable";
-        $req = $connexionBd->query($query);
-        $req->execute();
-        $donnees = $req->fetch(PDO::FETCH_OBJ);
-        return $donnees;
-    } 
-
-    public static function cacheLesMenusReserverAdmin()
-    {
-        require("connexionBd.php");
-        $utilisateur = "utilisateurs";
-        $tableUtilisateur = ExercicesEtCorrections::req_selectionContenuTable($utilisateur);
-        $admin = "admin";
-        $tableAdministrateur = ExercicesEtCorrections::req_selectionContenuTable($admin);
-    
-        if($tableUtilisateur && @$_SESSION['auth'] == $tableUtilisateur->email_uti)
-        { ?>
-            <!--******* SCRIPT POUR CACHER L'ACCES AUX FORMULAIRE_ADMIN AINSI QUE LE FORMULAIFRE_INSERTIONPDF AUX UTILISATEURS *******-->
-            <script>
-                var menuAdmin1 = document.getElementById('form_admin');
-                var menuAdmin2 = document.getElementById('form_insertion');
-                if(menuAdmin1)
-                {
-                    menuAdmin1.style.display='none';
-                    menuAdmin2.style.display='none';
-                }
-            </script>
-<?php  } 
-
-        elseif($tableAdministrateur && @$_SESSION['admin'] == $tableAdministrateur->email_adm)
-        { ?>
-            <!--******* SCRIPT POUR AFFICHER LES MENUS ADMIN AUX ADMINISTRATEURS *******-->
-            <script>
-                var menuAdmin1 = document.getElementById('form_admin');
-                var menuAdmin2 = document.getElementById('form_insertion');
-                if(menuAdmin1)
-                {
-                    // Les menus admin sont visibles pour les administrateurs
-                }
-            </script>
-<?php  }
-        else
-        { ?>
-            <!--******* SCRIPT POUR CACHER L'ACCES AUX FORMULAIRE_ADMIN AINSI QUE LE FORMULAIFRE_INSERTIONPDF AUX VISITEURS *******-->
-            <script>
-                var menuAdmin1 = document.getElementById('form_admin');
-                var menuAdmin2 = document.getElementById('form_insertion');
-                if(menuAdmin1)
-                {
-                    menuAdmin1.style.display='none';
-                    menuAdmin2.style.display='none';
-                }
-            </script>
-<?php  }
-    }
-
-
-
-    
 
 /*--------------------------------------------
     SYSTEME DE GESTION DES UTILISATEURS CBS

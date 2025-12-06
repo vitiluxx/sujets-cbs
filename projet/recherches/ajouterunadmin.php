@@ -1,6 +1,6 @@
 <?php
 
-$motdepasse = "gdc6bjnsvy"; // ton mot de passe
+$motdepasse = "gdc6@BJNSVY"; // ton mot de passe
 $hash = password_hash($motdepasse, PASSWORD_DEFAULT);
 echo $hash;
 

@@ -46,8 +46,8 @@ function securiteCbs() {
     header("Pragma: no-cache");
     header("Expires: 0");
     
-    if (!isset($_SESSION['usercbs'])) {
-        header('location: '.HOST.'form_connexionUtilisateur.php');
+    if (!isset($_SESSION['etudiant'])) {
+        header('location: '.HOST.'form_connexionCbs');
         exit();
     }
 }
@@ -80,35 +80,13 @@ function securiteAdminRole($role) {
     }
 }
 
-// Fonction de reconnexion automatique
+// Fonction de reconnexion automatique (DÉSACTIVÉE - Table utilisateurs supprimée)
+// Cette fonction n'est plus utilisée car la table utilisateurs a été supprimée
+// Les étudiants CBS n'utilisent pas de système de reconnexion automatique
 function reconnect_auto() {
-    startSessionIfNotStarted();
-    if (isset($_COOKIE[COOKIE_NAME]) && !isset($_SESSION['auth'])) {
-        global $connexionBd;
-
-        $connexion_auto = $_COOKIE[COOKIE_NAME];
-        $parts = explode("::", $connexion_auto);
-        if (count($parts) !== 2) {
-            setcookie(COOKIE_NAME, "", -1);
-            return;
-        }
-
-        $userId = $parts[0];
-        $token = $parts[1];
-
-        $req = $connexionBd->prepare("SELECT * FROM utilisateurs WHERE id_uti = ?");
-        $req->execute([$userId]);
-        $user = $req->fetch();
-
-        if ($user && password_verify($user['id_uti'] . "Koumadoum", $token)) {
-            $_SESSION['auth'] = $user;
-            setcookie(COOKIE_NAME, $connexion_auto, COOKIE_DURATION);
-            header("Location: form_publierEEC.php");
-            exit();
-        } else {
-            setcookie(COOKIE_NAME, "", -1);
-        }
-    }
+    // Fonction désactivée - la table utilisateurs n'existe plus
+    // Si nécessaire, implémenter une reconnexion automatique pour les étudiants CBS
+    return;
 }
 
 // Fonction pour vérifier le rôle de l'administrateur

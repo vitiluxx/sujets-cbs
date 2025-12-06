@@ -53,7 +53,7 @@ $examensLabels = [
 
         $('#filtre-filiere').on('change', function () {
             var valeur = this.value;
-            table.column(3).search(valeur ? '^' + valeur + '$' : '', true, false).draw();
+            table.column(4).search(valeur ? '^' + valeur + '$' : '', true, false).draw();
         });
     });
 </script>
@@ -82,6 +82,7 @@ $examensLabels = [
                         <th>ID</th>
                         <th>Matière</th>
                         <th>Année</th>
+                        <th>Niveau</th>
                         <th>Filière</th>
                         <th>CC</th>
                         <th>SN</th>
@@ -99,6 +100,13 @@ $examensLabels = [
                                 <td><?= htmlspecialchars($sujet->id); ?></td>
                                 <td><?= htmlspecialchars($sujet->matiere); ?></td>
                                 <td><?= htmlspecialchars($sujet->annee); ?></td>
+                                <td>
+                                    <?php if (isset($sujet->niveau) && $sujet->niveau !== null) : ?>
+                                        <span class="badge bg-info">Licence <?= htmlspecialchars($sujet->niveau); ?></span>
+                                    <?php else : ?>
+                                        <span class="text-muted">—</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td>
                                     <span class="badge badge-filiere">
                                         <?= htmlspecialchars($sujet->libelle_filiere); ?>
@@ -175,7 +183,7 @@ $examensLabels = [
                             </div>
 
                             <div class="row g-3">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label for="annee-<?= $sujet->filiere . '-' . $sujet->id; ?>" class="form-label">Année</label>
                                     <input type="number"
                                            class="form-control"
@@ -185,7 +193,18 @@ $examensLabels = [
                                            min="2000"
                                            max="<?= date('Y') + 1; ?>">
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
+                                    <label for="niveau-<?= $sujet->filiere . '-' . $sujet->id; ?>" class="form-label">Niveau</label>
+                                    <select class="form-control"
+                                            id="niveau-<?= $sujet->filiere . '-' . $sujet->id; ?>"
+                                            name="niveau">
+                                        <option value="">Sélectionner un niveau</option>
+                                        <option value="1" <?= (isset($sujet->niveau) && $sujet->niveau == 1) ? 'selected' : ''; ?>>Licence 1</option>
+                                        <option value="2" <?= (isset($sujet->niveau) && $sujet->niveau == 2) ? 'selected' : ''; ?>>Licence 2</option>
+                                        <option value="3" <?= (isset($sujet->niveau) && $sujet->niveau == 3) ? 'selected' : ''; ?>>Licence 3</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
                                     <label class="form-label">Filière</label>
                                     <input type="text"
                                            class="form-control"
