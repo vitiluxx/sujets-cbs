@@ -29,6 +29,7 @@
             $examen = (string) $_GET["examen"];
             $niveau = (int) $_GET["niveau"];
             $table = $eec->afficherSujetExamen($examen,$filiere,$niveau);
+            $table += $eec->afficherSujetExamen('tp',$filiere,$niveau);
                 
                 if (!empty($table)):
                 ?>

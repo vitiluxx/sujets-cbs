@@ -425,6 +425,127 @@ class ControllerAdmin
 
 /*============================================================================================================================ */
 
+    /*============================================================================================================================ */
+
+    /**
+     * Compresse un fichier PDF avec Ghostscript
+     * 
+     * @param string $fichierSource Chemin du fichier PDF source
+     * @param string $fichierDestination Chemin du fichier PDF compressé
+     * @param string $qualite Niveau de qualité : 'screen', 'ebook', 'printer', 'prepress'
+     * @return bool True si compression réussie, False sinon
+     */
+    private function compresserPDFAvecGhostscript($fichierSource, $fichierDestination, $qualite = 'ebook') 
+    {
+        // Vérifier que le fichier source existe
+        if (!file_exists($fichierSource)) {
+            return false;
+        }
+
+        // Détection du système d'exploitation
+        $isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+
+        // Chemins possibles pour Ghostscript selon le système
+        $gsPaths = [];
+        
+        if ($isWindows) {
+            // Chemins Windows (utiliser des doubles backslashes ou slashes)
+            $gsPaths = [
+                'C:\\Program Files\\gs\\gs10.06.0\\bin\\gswin64c.exe',
+                'C:\\Program Files (x86)\\gs\\gs10.06.0\\bin\\gswin32c.exe',
+                'C:\\Program Files\\gs\\gs10.04.0\\bin\\gswin64c.exe',
+                'C:\\Program Files\\gs\\gs10.03.1\\bin\\gswin64c.exe',
+                'C:\\Program Files\\gs\\gs10.02.1\\bin\\gswin64c.exe',
+                'gswin64c.exe',  // Si dans PATH
+                'gswin32c.exe',  // Si dans PATH
+            ];
+        } else {
+            // Chemins Linux/Unix/macOS
+            $gsPaths = [
+                'gs',                    // Dans PATH
+                '/usr/bin/gs',           // Chemin absolu standard
+                '/usr/local/bin/gs',     // macOS/Linux alternatif
+                '/opt/homebrew/bin/gs',  // macOS avec Homebrew (M1/M2)
+            ];
+        }
+
+        // Trouver le chemin de Ghostscript disponible
+        $gsPath = null;
+        
+        foreach ($gsPaths as $path) {
+            if ($isWindows) {
+                // Sur Windows : vérifier l'existence du fichier directement
+                if (file_exists($path)) {
+                    $gsPath = $path;
+                    break;
+                }
+                // Sinon tester avec 'where' pour les exécutables dans PATH
+                $test = shell_exec("where " . escapeshellarg(basename($path)) . " 2>nul");
+                if ($test !== null && trim($test) !== '') {
+                    $gsPath = trim(explode("\n", $test)[0]); // Prendre la première ligne
+                    break;
+                }
+            } else {
+                // Sur Linux/Unix : vérifier avec 'which' ou l'existence du fichier
+                if (file_exists($path)) {
+                    $gsPath = $path;
+                    break;
+                }
+                $test = shell_exec("which " . escapeshellarg($path) . " 2>/dev/null");
+                if ($test !== null && trim($test) !== '') {
+                    $gsPath = trim($test);
+                    break;
+                }
+            }
+        }
+
+        // Si Ghostscript n'est pas trouvé, retourner false
+        if ($gsPath === null) {
+            error_log("Ghostscript non trouvé sur le système. Compression PDF impossible.");
+            return false;
+        }
+
+        // Niveaux de qualité disponibles
+        $niveauxQualite = [
+            'screen'   => '/screen',    // 72 dpi - Compression maximale (écran)
+            'ebook'    => '/ebook',     // 150 dpi - Bon compromis (lecture numérique)
+            'printer'  => '/printer',   // 300 dpi - Haute qualité (impression)
+            'prepress' => '/prepress'   // 300+ dpi - Qualité maximale (pré-impression)
+        ];
+
+        $qualitePDF = $niveauxQualite[$qualite] ?? $niveauxQualite['ebook'];
+
+        // Construction de la commande Ghostscript avec échappement correct
+        $commande = sprintf(
+            '%s -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=%s ' .
+            '-dNOPAUSE -dQUIET -dBATCH -dDetectDuplicateImages=true ' .
+            '-dCompressFonts=true -r150 -sOutputFile=%s %s 2>&1',
+            escapeshellarg($gsPath),  // ✅ CORRECTION : Échapper le chemin Ghostscript
+            $qualitePDF,
+            escapeshellarg($fichierDestination),
+            escapeshellarg($fichierSource)
+        );
+
+        // Exécution de la commande
+        exec($commande, $output, $returnCode);
+
+        // Vérifier si la compression a réussi
+        if ($returnCode === 0 && file_exists($fichierDestination)) {
+            // Vérifier que le fichier compressé n'est pas corrompu (taille > 0)
+            if (filesize($fichierDestination) > 0) {
+                return true;
+            }
+        }
+
+        // Log de l'erreur si échec
+        error_log("Erreur compression PDF: " . implode("\n", $output));
+        return false;
+    }
+    /*============================================================================================================================
+    
+    /**
+     * Affiche le formulaire d'insertion de PDF avec compression automatique
+     */
     public function affichePageForm_insertionPDF()
     {
         require("connexionBd.php");
@@ -466,7 +587,8 @@ class ControllerAdmin
                             // Fichier valide, on l'ajoute au tableau
                             $fichiersValides[$nomChamp] = [
                                 "nom" => $fichier["name"],
-                                "tmp_name" => $fichier["tmp_name"]
+                                "tmp_name" => $fichier["tmp_name"],
+                                "size" => $fichier["size"]
                             ];
                         } 
                         else 
@@ -503,21 +625,69 @@ class ControllerAdmin
                     $req_insertion = $eec->insererSujet($filiere, $matiere, $annee, $niveau, $cc, $sn, $sr, $td, $tp);
         
                     if ($req_insertion) {
-                        // Déplacement des fichiers vers le dossier de destination
+                        // Compteurs pour statistiques
+                        $nbFichiersCompresses = 0;
+                        $tailleOriginale = 0;
+                        $tailleFinale = 0;
+
+                        // Déplacement et compression des fichiers vers le dossier de destination
                         foreach ($fichiersValides as $nomChamp => $fichier) 
                         {
-                            $emplacement_reel = ASSETS_ROOT . "uploads/docpdf/" . $fichier["nom"];
-                            move_uploaded_file($fichier["tmp_name"], $emplacement_reel);
+                            $fichierTemp = $fichier["tmp_name"];
+                            $nomFichier = $fichier["nom"];
+                            $tailleOriginale += $fichier["size"];
+                            
+                            // Créer un fichier temporaire pour la compression
+                            $fichierCompresse = sys_get_temp_dir() . '/compressed_' . uniqid() . '_' . $nomFichier;
+                            
+                            // Tenter la compression avec Ghostscript (qualité 'ebook' = bon compromis)
+                            $compressionReussie = $this->compresserPDFAvecGhostscript($fichierTemp, $fichierCompresse, 'ebook');
+                            
+                            // Emplacement final du fichier
+                            $emplacement_reel = ASSETS_ROOT . "uploads/docpdf/" . $nomFichier;
+                            
+                            if ($compressionReussie) {
+                                // Utiliser le fichier compressé
+                                $tailleCompresse = filesize($fichierCompresse);
+                                $tailleFinale += $tailleCompresse;
+                                
+                                // Calculer le taux de compression
+                                $pourcentageReduction = round((1 - ($tailleCompresse / $fichier["size"])) * 100, 1);
+                                
+                                // Déplacer le fichier compressé vers la destination finale
+                                if (move_uploaded_file($fichierCompresse, $emplacement_reel) || 
+                                    copy($fichierCompresse, $emplacement_reel)) {
+                                    $nbFichiersCompresses++;
+                                    @unlink($fichierCompresse); // Nettoyer le fichier temporaire
+                                    
+                                    error_log("PDF compressé : $nomFichier - Réduction : $pourcentageReduction%");
+                                }
+                            } else {
+                                // Fallback : utiliser le fichier original si la compression échoue
+                                $tailleFinale += $fichier["size"];
+                                move_uploaded_file($fichierTemp, $emplacement_reel);
+                                
+                                error_log("Compression échouée pour $nomFichier - Fichier original utilisé");
+                            }
                         }
+
+                        // Calculer les statistiques globales
+                        $reductionTotale = $tailleOriginale > 0 ? round((1 - ($tailleFinale / $tailleOriginale)) * 100, 1) : 0;
+                        $gainEspace = round(($tailleOriginale - $tailleFinale) / 1024 / 1024, 2); // En Mo
+
                         ?>
                         <script>
-                            alert("Sujet PDF inséré avec succès.");
+                            alert("✅ Sujet PDF inséré avec succès !\n\n" +
+                                  "📊 Statistiques de compression :\n" +
+                                  "• Fichiers compressés : <?= $nbFichiersCompresses ?>\n" +
+                                  "• Réduction totale : <?= $reductionTotale ?>%\n" +
+                                  "• Espace économisé : <?= $gainEspace ?> Mo");
                         </script>
                         <?php
                     } else {
                         ?>
                         <script>
-                            alert("Erreur : sujet PDF non inséré.");
+                            alert("❌ Erreur : sujet PDF non inséré dans la base de données.");
                         </script>
                         <?php
                     }
@@ -525,7 +695,11 @@ class ControllerAdmin
             } 
             else 
             {
-                echo "Aucun fichier PDF importé.";
+                ?>
+                <script>
+                    alert("⚠️ Aucun fichier PDF importé.");
+                </script>
+                <?php
             }
         }
 

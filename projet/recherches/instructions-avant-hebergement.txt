@@ -1,0 +1,6 @@
+🔧📘 Guide d'installation de Ghostscript sur un systeme ou serveur d'hébergement
+Sur Windows :
+    Télécharger depuis : https://www.ghostscript.com/download/gsdnld.html
+    Installer et ajouter au PATH système si ce n'est pas fait automatiquement
+
+Installation sur VPS/Serveur Dédié/Cloud

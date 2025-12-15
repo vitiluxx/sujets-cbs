@@ -31,14 +31,14 @@
         </section>
         <section class="section-sujet">
             <a href="<?= HOST; ?>liste_filieres.php?sujet=td">
-                <p>TRAVAUX DIRIGES</p>
+                <p>TD & TP</p>
             </a>
         </section>
-        <section class="section-sujet">
+        <!-- <section class="section-sujet">
             <a href="<?= HOST; ?>liste_filieres.php?sujet=tp">
                 <p>TRAVAUX PRATIQUES</p>
             </a>
-        </section>
+        </section> -->
     </div>
 
     
