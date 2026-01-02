@@ -58,7 +58,7 @@ MEME CHOSE JUSTE C'EST UNE DUPLICATION POUR QUE MEME SI L'ON DEMANDE UNE PAGE SA
 
 =================================================================================================================================================*/
 
-                      "accueil" =>                                      ["controller" => "Controller", "method" => "affichePageAccueil" ], 
+                      "accueil" =>                                      ["controller" => "Controller", "method" => "affichePageCbs" ], 
                       "cefodbusinessschool" =>                          ["controller" => "Controller", "method" => "affichePageCbs"],                    
                       "form_inscriptionUtilisateur" =>                  ["controller" => "Controller", "method" => "affichePageForm_inscriptionUtilisateur"], 
                       "form_connexionUtilisateur" =>                    ["controller" => "Controller", "method" => "affichePageForm_connexionUtilisateur"],
