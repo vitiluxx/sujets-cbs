@@ -1,0 +1,5 @@
+RewriteEngine On
+# Ne pas rediriger si on est déjà dans le dossier projet
+RewriteCond %{REQUEST_URI} !^/projet/
+# Rediriger toutes les requêtes vers le sous-dossier
+RewriteRule ^(.*)$ /projet/$1 [L]
