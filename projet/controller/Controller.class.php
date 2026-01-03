@@ -1061,9 +1061,9 @@ public function affichePageCbs()
 
 
 /*============================================================================================================================ */
+
 public function affichePageForm_inscriptionEtudiantCbs()
 {
-
     require("connexionBd.php");
     require(MODEL_ROOT."ExercicesEtCorrections.class.php");
     $eec = new ExercicesEtCorrections($connexionBd);
@@ -1078,7 +1078,7 @@ public function affichePageForm_inscriptionEtudiantCbs()
         // Vérifier si les fichiers ont été uploadés
         if ($carte_recto_etu["error"] === 0 && $carte_verso_etu["error"] === 0) 
         {
-            $dossier_upload = ASSETS_UPLOADS_CBS_IMAGES_ROOT; // Dossier où stocker les images
+            $dossier_upload = ASSETS_UPLOADS_CBS_IMAGES_ROOT;
             $nom_recto = uniqid() . "_" . basename($carte_recto_etu["name"]);
             $nom_verso = uniqid() . "_" . basename($carte_verso_etu["name"]);
         
@@ -1086,7 +1086,7 @@ public function affichePageForm_inscriptionEtudiantCbs()
             if (move_uploaded_file($carte_recto_etu["tmp_name"], $dossier_upload . $nom_recto) &&
                 move_uploaded_file($carte_verso_etu["tmp_name"], $dossier_upload . $nom_verso)) {
                 
-                // Insérer les données dans la table `etudiant_cbs`
+                // Insérer les données dans la table
                 try 
                 {
                     $req = $connexionBd->prepare("
@@ -1099,37 +1099,35 @@ public function affichePageForm_inscriptionEtudiantCbs()
                     $req->bindParam(':carte_verso_etu', $nom_verso, PDO::PARAM_STR);
                     $req->execute();
                     
-                    ?>
-                    <script>alert("Demande envoyee avec succes, veillez attendre un email de validation de votre compte")</script>
-                    <?php
+                    // ✅ SUPPRIMEZ tous les <script>alert()</script>
+                    // Stockez le message dans la session
+                    $_SESSION['message_inscription'] = "✅ Demande envoyée avec succès ! Veuillez patienter au plus tard 24h le temps qu'un administrateur valide votre compte et vous envoie un email avec votre identifiant de connexion.";
+                    $_SESSION['type_message'] = "success"; // Pour le style CSS
 
-                    // ✅ Message de confirmation personnalisé
-                    $_SESSION['message_inscription'] = "✅ Veuillez patienter au plus tard 24h le temps qu'un administrateur valide votre compte et vous envoie un email avec votre identifiant de connexion.";
-
+                    // Redirection SANS RIEN AVANT
                     header("Location: ".HOST."form_connexionCbs");
                     exit();
                 } 
                 catch (PDOException $e) 
                 {
-                    die("Erreur lors de l'inscription : " . $e->getMessage());
+                    $_SESSION['message_inscription'] = "❌ Erreur lors de l'inscription : " . $e->getMessage();
+                    $_SESSION['type_message'] = "error";
+                    header("Location: ".HOST."form_inscriptionCbs");
+                    exit();
                 }
             } else {
-                ?>
-                <script>alert("Erreur lors de l'importation des fichiers.")</script>
-                <?php
+                $_SESSION['message_inscription'] = "❌ Erreur lors de l'importation des fichiers.";
+                $_SESSION['type_message'] = "error";
                 header("Location: ".HOST."form_inscriptionCbs");
                 exit();
             }
         } else {
-            ?>
-            <script>alert("Veuillez télécharger les deux images de la carte d'étudiant.")</script>
-            <?php
-
+            $_SESSION['message_inscription'] = "❌ Veuillez télécharger les deux images de la carte d'étudiant.";
+            $_SESSION['type_message'] = "error";
             header("Location: ".HOST."form_inscriptionCbs");
             exit();
         }
     }
-
 
     include(CEFODBUSINESSSCHOOL_ROOT . "form_inscriptionCbs.php");
 }
