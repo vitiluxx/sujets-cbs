@@ -1,6 +1,6 @@
 <?php
 /*** CONFIGURATION */
-ini_set('display_errors','on');
+ini_set('display_errors','off');
 error_reporting(E_ALL);
 
 $host = $_SERVER['HTTP_HOST'];
